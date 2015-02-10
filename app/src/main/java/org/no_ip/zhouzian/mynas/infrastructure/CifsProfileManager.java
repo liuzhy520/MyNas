@@ -58,13 +58,16 @@ public class CifsProfileManager {
     static public void ModifyProfile(CifsProfile profile) throws CifsProfileException {
         CifsProfile tProfile = GetProfileById(profile.getProfileId());
         if (tProfile != null){
-            //TODO: name dup check here
-            tProfile.setProfileName(profile.getProfileName());
-            tProfile.setRootUrl(profile.getRootUrl());
-            tProfile.setUsername(profile.getUsername());
-            tProfile.setPassword(profile.getPassword());
-            tProfile.setSsl(profile.isSsl());
-            Commit();
+            if (!IsProfileNameDup(profile.getProfileName(), tProfile.getProfileId())) {
+                tProfile.setProfileName(profile.getProfileName());
+                tProfile.setRootUrl(profile.getRootUrl());
+                tProfile.setUsername(profile.getUsername());
+                tProfile.setPassword(profile.getPassword());
+                tProfile.setSsl(profile.isSsl());
+                Commit();
+            } else {
+                throw new CifsProfileException("Profile name cannot be duplicated");
+            }
         }
         else{
             throw new CifsProfileException("Cannot find the profile to modify.");
@@ -73,7 +76,7 @@ public class CifsProfileManager {
 
     /* Add the new profile to the profile list and commit to the shared preferences */
     static public void AddProfile(CifsProfile profile) throws CifsProfileException {
-        if (!IsProfileNameDup(profile.getProfileName())){        //profile name cannot be duplicated
+        if (!IsProfileNameDup(profile.getProfileName(), -1)){        //profile name cannot be duplicated
             profile.setProfileId(GetNextId());
             profiles.add(profile);
             Commit();
@@ -101,11 +104,13 @@ public class CifsProfileManager {
         editor.commit();
     }
 
-    /* Check if the given new profile name is duplicated with existing ones */
-    static private boolean IsProfileNameDup(String pName){
+    /* Check if the given new profile name is duplicated with existing ones
+     * Once user is modifying a profile, ignoreProfileId specify the profile id
+     * If user is adding a new profile, ignoreProfileId should be set to be -1 */
+    static private boolean IsProfileNameDup(String pName, int ignoreProfileId){
         boolean ret = false;
         for (CifsProfile profile : profiles){
-            if (profile.getProfileName().equalsIgnoreCase(pName.trim())){
+            if (profile.getProfileId() != ignoreProfileId && profile.getProfileName().equalsIgnoreCase(pName.trim())){
                 ret = true;
             }
         }

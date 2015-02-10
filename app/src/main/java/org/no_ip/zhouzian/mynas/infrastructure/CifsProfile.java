@@ -10,25 +10,28 @@ public class CifsProfile {
 
     public CifsProfile (String profileName, String rootUrl, String username, String password, boolean isSsl){
         this.profileId = -1;
-        this.profileName = profileName;
-        this.rootUrl = rootUrl;
-        this.username = username;
-        this.password = password;
+        this.profileName = profileName.trim();
+        this.rootUrl = rootUrl.trim();
+        this.username = username.trim();
+        this.password = password.trim();
         this.isSsl = isSsl;
     }
 
     /* ProfileId will be reassigned when saved to profile manager
      * unsaved profile has id == -1 */
-    public boolean IsPersisted (){
+    public boolean isPersisted(){
         return profileId != -1;
     }
 
     /* Validate if the profile is correct.
      * Empty profile name or root url is not allowed
      * Duplicated profile name is checked by profile manager */
-    public boolean IsValidated (){
-        if (profileName.isEmpty() || rootUrl.isEmpty()) return false;
-        else return true;
+    public void validate () throws CifsProfileException{
+        if (profileName.isEmpty()){
+            throw new CifsProfileException("Profile name cannot be empty");
+        } else if (rootUrl.isEmpty()){
+            throw new CifsProfileException("Root url cannot be empty");
+        }
         // TODO: add code to try to connect to the shared folder for connection validation
     }
 
@@ -45,7 +48,7 @@ public class CifsProfile {
     }
 
     public void setProfileName(String profileName) {
-        this.profileName = profileName;
+        this.profileName = profileName.trim();
     }
 
     public String getRootUrl() {
@@ -53,7 +56,7 @@ public class CifsProfile {
     }
 
     public void setRootUrl(String rootUrl) {
-        this.rootUrl = rootUrl;
+        this.rootUrl = rootUrl.trim();
     }
 
     public String getUsername() {
@@ -61,7 +64,7 @@ public class CifsProfile {
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        this.username = username.trim();
     }
 
     public String getPassword() {
@@ -69,7 +72,7 @@ public class CifsProfile {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = password.trim();
     }
 
     public boolean isSsl() {

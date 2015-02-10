@@ -33,7 +33,12 @@ app.controller('navCtrl', ['$scope', function($scope){		//Navigation controller
 app.controller('profileSettingsCtrl', ['$scope', function($scope){		//Profile controller
     $scope.showDetail = false;
 	function reloadProfiles (){
-		$scope.profiles = JSON.parse(webAppInterface.GetAllProfiles());
+		 var response = JSON.parse(webAppInterface.GetAllProfiles());
+		 if (response.status == 'SUCCESS'){
+			$scope.profiles = response.data;
+		 } else {
+			$scope.profiles = [];
+		 }
 	}
 	reloadProfiles();
     $scope.curProfile = null;
@@ -55,15 +60,24 @@ app.controller('profileSettingsCtrl', ['$scope', function($scope){		//Profile co
                             isSsl: false};
     }
     $scope.createProfile = function(){
-		webAppInterface.AddProfile($scope.curProfile.profileName, $scope.curProfile.rootUrl, $scope.curProfile.username, $scope.curProfile.password, $scope.curProfile.isSsl);
-		$scope.goToListView();
+		document.activeElement.blur()	//hide keyboard
+		var response = JSON.parse(webAppInterface.AddProfile($scope.curProfile.profileName, $scope.curProfile.rootUrl, $scope.curProfile.username, $scope.curProfile.password, $scope.curProfile.isSsl));
+		if (response.status == 'SUCCESS'){
+			$scope.goToListView();
+		}
     }
     $scope.saveProfile = function(){
-		webAppInterface.ModifyProfile($scope.curProfile.profileId, $scope.curProfile.profileName, $scope.curProfile.rootUrl, $scope.curProfile.username, $scope.curProfile.password, $scope.curProfile.isSsl);
-		$scope.goToListView();
+		document.activeElement.blur()	//hide keyboard
+		var response = JSON.parse(webAppInterface.ModifyProfile($scope.curProfile.profileId, $scope.curProfile.profileName, $scope.curProfile.rootUrl, $scope.curProfile.username, $scope.curProfile.password, $scope.curProfile.isSsl));
+		if (response.status == 'SUCCESS'){
+			$scope.goToListView();
+		}
     }
     $scope.deleteProfile = function(){
-		webAppInterface.RemoveProfileById($scope.curProfile.profileId);
-		$scope.goToListView();
+		document.activeElement.blur()	//hide keboard
+		var response = JSON.parse(webAppInterface.RemoveProfileById($scope.curProfile.profileId));
+		if (response.status == 'SUCCESS'){
+			$scope.goToListView();
+		}
     }
 }]);

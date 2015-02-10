@@ -1,12 +1,12 @@
 package org.no_ip.zhouzian.mynas;
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Window;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import org.no_ip.zhouzian.mynas.infrastructure.CifsProfileManager;
 
 public class MainActivity extends Activity {
     @Override
@@ -16,6 +16,9 @@ public class MainActivity extends Activity {
         WebView webView = new WebView(this);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);                //Enable javascript
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(true);   //Enable Chrome remote debug on Kitkat or later
+        }
         webView.setWebViewClient(new NASWebViewClient());
         setContentView(webView);
         webView.loadUrl("file:///android_asset/view/home/main_page.html");      //Load single page AngularJS app
