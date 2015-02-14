@@ -2,20 +2,17 @@
 <html ng-app="myNasApp">
 <head>
     <link href="../../lib/bootstrap_3.3.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../../lib/bs_material/css/material-wfont.min.css" rel="stylesheet">
-    <link href="../../lib/bs_material/css/ripples.min.css" rel="stylesheet">
+    <link href="../../css/app.css" rel="stylesheet">
 
     <script src="../../lib/jquery_2.1.3/jquery-2.1.3.min.js"></script>
     <script src="../../lib/bootstrap_3.3.2/js/bootstrap.min.js"></script>
     <script src="../../lib/angular_1.3.12/angular.min.js"></script>
+    <script src="../../lib/angular_bootstrap_checkbox/angular_checkbox.js"></script>
     <script src="../../lib/lodash_3.0.1/lodash.js"></script>
-    <script src="../../lib/arrive_2.0.0/arrive-2.0.0.min.js"></script>
-    <script src="../../lib/bs_material/js/material.min.js"></script>
-    <script src="../../lib/bs_material/js/ripples.min.js"></script>
     <script src="../../js/common.js"></script>
 </head>
 <body ng-controller="navCtrl" style="padding-top: 70px;">
-<nav class="navbar navbar-fixed-top" >
+<nav class="navbar navbar-default navbar-fixed-top" >
     <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main_nav_bar">
             <span class="sr-only">Toggle navigation</span>
@@ -34,10 +31,14 @@
     </div>
 </nav>
 
+<div class="container" ng-if="getCurTitle() == 'My Nas'" ng-controller="nasMainCtrl">
+
+</div>
+
 <div class="container" ng-if="getCurTitle() == 'Settings'" ng-controller="profileSettingsCtrl">
     <div ng-if="!showDetail">
         <div class="btn-group" style="margin-bottom: 10px;">
-            <button class="btn btn-info" ng-click="goToNewProfile()">Create new profile</button>
+            <button class="btn btn-success" ng-click="goToNewProfile()">Create new profile</button>
         </div>
         <ul class="nav nav-pills nav-stacked">
             <li class="list-group-item" ng-repeat="profile in profiles" ng-click="viewDetail(profile)">
@@ -46,7 +47,7 @@
         </ul>
     </div>
     <div ng-if="showDetail">
-        <form class="well bs-component">
+        <form class="well">
             <div class="form-group">
                 <label>Profile Name:</label>
                 <input class="form-control" ng-model="curProfile.profileName">
@@ -54,6 +55,10 @@
             <div class="form-group">
                 <label>Root URL:</label>
                 <input class="form-control" ng-model="curProfile.rootUrl">
+            </div>
+			<div class="form-group">
+                <label>Port:</label>
+                <input type="number" class="form-control" ng-model="curProfile.portNumber">
             </div>
             <div class="form-group">
                 <label>Username:</label>
@@ -63,20 +68,20 @@
                 <label>Password:</label>
                 <input type="password" class="form-control" ng-model="curProfile.password">
             </div>
-            <div class="checkbox checkbox-primary">
+            <div>
                 <label class="control-label">
-                    <input type="checkbox" ng-model="curProfile.isSsl"> SSL
+                    <checkbox ng-model="curProfile.isSsl"></checkbox> SSL
                 </label>
             </div>
         </form>
         <div class="btn-group">
-            <button class="btn btn-primary" ng-click="goToListView()">Back</button>
+            <button class="btn btn-primary" ng-click="goToListView()" ng-disabled="wait">Back</button>
         </div>
         <div class="btn-group pull-right" ng-show="curProfile.profileId != -1">
-            <button class="btn btn-danger"  ng-click="deleteProfile()">Delete</button>
-            <button class="btn btn-success" ng-click="saveProfile()">Save</button>
+            <button class="btn btn-danger"  ng-click="deleteProfile()" ng-disabled="wait">Delete</button>
+            <button class="btn btn-success" ng-click="saveProfile()" ng-disabled="wait">Save</button>
         </div>
-        <button class="btn btn-success pull-right" ng-show="curProfile.profileId == -1" ng-click="createProfile()">Create</button>
+        <button class="btn btn-success pull-right" ng-show="curProfile.profileId == -1" ng-click="createProfile()" ng-disabled="wait">Create</button>
     </div>
 </div>
 

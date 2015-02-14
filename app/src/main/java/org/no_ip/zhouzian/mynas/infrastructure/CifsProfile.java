@@ -1,17 +1,24 @@
 package org.no_ip.zhouzian.mynas.infrastructure;
 
+import java.net.MalformedURLException;
+
+import jcifs.smb.NtlmPasswordAuthentication;
+import jcifs.smb.SmbFile;
+
 public class CifsProfile {
     private int profileId;
     private String profileName;
     private String rootUrl;
+    private int portNumber;     //default should be 445, but some old NAS devices use 139
     private String username;
     private String password;
     private boolean isSsl;
 
-    public CifsProfile (String profileName, String rootUrl, String username, String password, boolean isSsl){
+    public CifsProfile (String profileName, String rootUrl, int portNumber, String username, String password, boolean isSsl){
         this.profileId = -1;
         this.profileName = profileName.trim();
         this.rootUrl = rootUrl.trim();
+        this.portNumber = portNumber;
         this.username = username.trim();
         this.password = password.trim();
         this.isSsl = isSsl;
@@ -23,16 +30,51 @@ public class CifsProfile {
         return profileId != -1;
     }
 
+    /* Check if connection type is anonymous.
+     * Only check username. */
+    public boolean isAnonymous(){
+        return username.isEmpty();
+    }
+
     /* Validate if the profile is correct.
      * Empty profile name or root url is not allowed
-     * Duplicated profile name is checked by profile manager */
+     * Duplicated profile name is checked by profile manager
+     * Test connection may takes long time. */
     public void validate () throws CifsProfileException{
         if (profileName.isEmpty()){
             throw new CifsProfileException("Profile name cannot be empty");
         } else if (rootUrl.isEmpty()){
             throw new CifsProfileException("Root url cannot be empty");
         }
-        // TODO: add code to try to connect to the shared folder for connection validation
+        try{
+            SmbFile smbInstance = getSmbInstance();
+            smbInstance.connect();
+            smbInstance.list();
+        } catch (Throwable th) {
+            throw new CifsProfileException("Connection failed. Please verify your profile.");
+        }
+    }
+
+    /* Create a SmbFile instance the can be used to query folders */
+    public SmbFile getSmbInstance () throws MalformedURLException {
+        NtlmPasswordAuthentication auth = isAnonymous() ? NtlmPasswordAuthentication.ANONYMOUS : new NtlmPasswordAuthentication("", username, password);    // we don't support domain, so the first parameter is always empty string
+        return new SmbFile(formatUrl(), auth);
+    }
+
+    /* Insert port number to url if the port number is not 445.
+     * Added trailing slash is it's not there. */
+    private String formatUrl (){
+        StringBuilder sb = new StringBuilder();
+        String[] paths = rootUrl.split("/");
+        if (portNumber != 445){
+            paths[0] = paths[0] + ":" + portNumber;
+        }
+        sb.append("smb://");
+        for(String path : paths){
+            sb.append(path);
+            sb.append("/");
+        }
+        return sb.toString();
     }
 
     public int getProfileId() {
@@ -59,6 +101,14 @@ public class CifsProfile {
         this.rootUrl = rootUrl.trim();
     }
 
+    public int getPortNumber() {
+        return portNumber;
+    }
+
+    public void setPortNumber(int portNumber) {
+        this.portNumber = portNumber;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -82,4 +132,5 @@ public class CifsProfile {
     public void setSsl(boolean isSsl) {
         this.isSsl = isSsl;
     }
+
 }

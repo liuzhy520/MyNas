@@ -61,6 +61,7 @@ public class CifsProfileManager {
             if (!IsProfileNameDup(profile.getProfileName(), tProfile.getProfileId())) {
                 tProfile.setProfileName(profile.getProfileName());
                 tProfile.setRootUrl(profile.getRootUrl());
+                tProfile.setPortNumber(profile.getPortNumber());
                 tProfile.setUsername(profile.getUsername());
                 tProfile.setPassword(profile.getPassword());
                 tProfile.setSsl(profile.isSsl());

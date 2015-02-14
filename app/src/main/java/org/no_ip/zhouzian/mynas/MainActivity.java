@@ -8,6 +8,9 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import jcifs.smb.NtlmPasswordAuthentication;
+import jcifs.smb.SmbFile;
+
 public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,7 +19,7 @@ public class MainActivity extends Activity {
         WebView webView = new WebView(this);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);                //Enable javascript
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             WebView.setWebContentsDebuggingEnabled(true);   //Enable Chrome remote debug on Kitkat or later
         }
         webView.setWebViewClient(new NASWebViewClient());
@@ -24,7 +27,6 @@ public class MainActivity extends Activity {
         webView.loadUrl("file:///android_asset/view/home/main_page.html");      //Load single page AngularJS app
         initializeJSInterface(webView);
     }
-
     /* Initialize the interface between javascript and back-end java code */
     private void initializeJSInterface(WebView webView) {
         webView.addJavascriptInterface(new WebAppInterface(this), "webAppInterface");
