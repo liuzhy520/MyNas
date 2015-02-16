@@ -1,3 +1,33 @@
+/* Global callback functions that can be accessed by Java code */
+var Global = function(){
+	var backHandler = null;		//function handler called when hardware Back button is clicked
+	var menuHandler = null;		//function handler called when hardware menu button is clicked
+	return {
+		setBackHandler: function(funcRef){
+			backHandler = funcRef;
+		},
+		resetBackHandler: function() {
+			backHandler = null;
+		},
+		onBackClicked: function(){
+			if (typeof backHandler == 'function') {
+				backHandler();
+			}
+		},
+		setMenuHandler: function(funcRef){
+			menuHandler = funcRef;
+		},
+		resetMenuHandler: function() {
+			menuHandler = null;
+		},
+		onMenuClicked: function(){
+			if (typeof menuHandler == 'function') {
+				menuHandler();
+			}
+		}
+	}
+}();
+
 var app = angular.module('myNasApp', ['ui.checkbox']);		//Bootstrap angular app. Declare app module
 
 /* ng-long-press directive */
@@ -89,6 +119,12 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 			$scope.profiles = [];
 		 }
 	}
+	function isModalOpened (){
+		return $('.modal:visible').length > 0;
+	}
+	function closeModal() {
+		$('.modal').modal('hide');
+	}
 	reloadProfiles();
 	
 	$scope.connectProfile = function(profileId){
@@ -99,20 +135,27 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 			$scope.docTree.unshift(backEntry);
 			selectedProfileId = profileId;
 			$scope.connected = true;
+			Global.setBackHandler($scope.goTo);
 		}
 	}
 	
 	/* Only used in browse view. Open the selected entry under the current profile, or go back to the parent folder */
 	$scope.goTo = function(entry) {
-		if (entry.command == 'up') {		//go back
-			if (relativePath.length != 0) {
-			relativePath.pop();
-			var response = JSON.parse(webAppInterface.Browse(selectedProfileId, relativePath.join('/')));
-			if (response.status == 'SUCCESS') {
-				$scope.docTree = response.data;
-				$scope.docTree.unshift(backEntry);
+		if (entry == null || entry.command == 'up') {		//go back. When called from hardware back button, entry is null; When called from up soft button, entry is an smbEntry
+			if (isModalOpened()) {	//close popup menu dialog when Back hardware is clicked
+				closeModal();
 			}
-		}
+			else if (relativePath.length != 0) {
+				relativePath.pop();
+				var response = JSON.parse(webAppInterface.Browse(selectedProfileId, relativePath.join('/')));
+				if (response.status == 'SUCCESS') {
+					$scope.docTree = response.data;
+					$scope.docTree.unshift(backEntry);
+				}
+				if (entry == null) {	//called from Java code. Need to manually call $apply().
+					$scope.$apply();
+				}
+			}
 		}
 		else if (entry.isDirectory) {		//open folder
 			relativePath.push(entry.name);
@@ -128,16 +171,19 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 	$scope.disconnect = function(){
 		$scope.connected = false;
 		selectedProfileId = null;
+		Global.resetBackHandler();
 	}
 	
 	/* Show context menu for entry when long-pressed */
 	$scope.showContextMenu = function(entry) {
 		if (!entry.command) {
+			webAppInterface.HapticFeedback();
 			selectedEntry = entry.name;
 			$('#entry-menu').modal('show');
 		}
 	}
 	
+	/* Show detail information about an entry */
 	$scope.showEntryDetails = function () {
 		var path = relativePath.length == 0 ? selectedEntry : relativePath.join('/') + '/' + selectedEntry;
 		var response = JSON.parse(webAppInterface.Detail(selectedProfileId, path));
@@ -147,6 +193,7 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 				$('#entry-details').modal('show');
 			}
 	}
+	
 }]);
 
 /* Profile controller */
@@ -167,12 +214,17 @@ app.controller('profileSettingsCtrl', ['$scope', function($scope){
     $scope.viewDetail = function(profile){
         $scope.showDetail = true;
         $scope.curProfile = angular.copy(profile);
+		Global.setBackHandler($scope.goToListView);
     }
 	
 	/* Returns to the profile list view */
-    $scope.goToListView = function(){
+    $scope.goToListView = function(noApply){
 		reloadProfiles();
         $scope.showDetail = false;
+		Global.resetBackHandler();
+		if (!noApply) {
+			$scope.$apply();
+		}
     }
 	
 	/* Goes to detail view. No profile is selected. New empty profile template is used. */
@@ -184,6 +236,7 @@ app.controller('profileSettingsCtrl', ['$scope', function($scope){
                             password: '',
                             rootUrl: '',
 							portNumber: 445};
+		Global.setBackHandler($scope.goToListView);
     }
 	
 	/* Calls Java code to create a new profile */
@@ -192,7 +245,7 @@ app.controller('profileSettingsCtrl', ['$scope', function($scope){
 		var response = JSON.parse(webAppInterface.AddProfile($scope.curProfile.profileName, $scope.curProfile.rootUrl, $scope.curProfile.portNumber, $scope.curProfile.username, $scope.curProfile.password));
 		$scope.wait = false;
 		if (response.status == 'SUCCESS'){
-			$scope.goToListView();
+			$scope.goToListView(false);
 		}
     }
 	
@@ -202,7 +255,7 @@ app.controller('profileSettingsCtrl', ['$scope', function($scope){
 		var response = JSON.parse(webAppInterface.ModifyProfile($scope.curProfile.profileId, $scope.curProfile.profileName, $scope.curProfile.rootUrl, $scope.curProfile.portNumber, $scope.curProfile.username, $scope.curProfile.password));
 		$scope.wait = false;
 		if (response.status == 'SUCCESS'){
-			$scope.goToListView();
+			$scope.goToListView(false);
 		}
     }
 	
@@ -211,7 +264,7 @@ app.controller('profileSettingsCtrl', ['$scope', function($scope){
 		document.activeElement.blur()	//hide keboard
 		var response = JSON.parse(webAppInterface.RemoveProfileById($scope.curProfile.profileId));
 		if (response.status == 'SUCCESS'){
-			$scope.goToListView();
+			$scope.goToListView(false);
 		}
     }
 }]);

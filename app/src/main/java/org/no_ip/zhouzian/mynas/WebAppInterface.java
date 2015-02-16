@@ -3,6 +3,8 @@ package org.no_ip.zhouzian.mynas;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.view.HapticFeedbackConstants;
+import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 import com.google.gson.Gson;
@@ -11,11 +13,13 @@ import org.no_ip.zhouzian.mynas.infrastructure.CifsProfileManager;
 
 public class WebAppInterface {
     private Context appContext;
+    private View webView;
     private ProgressDialog loadingDlg;
 
     /* Constructor. Initialize other manager classes */
-    public WebAppInterface(Context context){
-        appContext = context;
+    public WebAppInterface(Context context, View webView){
+        this.appContext = context;
+        this.webView = webView;
         loadingDlg = new ProgressDialog(context);
         loadingDlg.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         loadingDlg.setCancelable(false);
@@ -136,6 +140,11 @@ public class WebAppInterface {
         Gson gson = new Gson();
         WebAppResponse response = new WebAppResponse(status, data, errorMsg);
         return gson.toJson(response);
+    }
+
+    @JavascriptInterface
+    public void HapticFeedback () {
+        webView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
     }
 
     private void ShowLoading(final String msg){

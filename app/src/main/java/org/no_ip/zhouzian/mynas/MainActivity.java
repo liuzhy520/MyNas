@@ -12,11 +12,13 @@ import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbFile;
 
 public class MainActivity extends Activity {
+    private WebView webView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE); //Remove title bar. We'll use Bootstrap nav to replace it.
-        WebView webView = new WebView(this);
+        webView = new WebView(this);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);                //Enable javascript
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -25,11 +27,17 @@ public class MainActivity extends Activity {
         webView.setWebViewClient(new NASWebViewClient());
         setContentView(webView);
         webView.loadUrl("file:///android_asset/view/home/main_page.html");      //Load single page AngularJS app
-        initializeJSInterface(webView);
+        initializeJSInterface();
     }
+
+    @Override
+    public void onBackPressed(){
+        webView.loadUrl("javascript:Global.onBackClicked()");
+    }
+
     /* Initialize the interface between javascript and back-end java code */
-    private void initializeJSInterface(WebView webView) {
-        webView.addJavascriptInterface(new WebAppInterface(this), "webAppInterface");
+    private void initializeJSInterface() {
+        webView.addJavascriptInterface(new WebAppInterface(this, webView), "webAppInterface");
     }
 
     /* Used to override open link behavior. By default, new links are opened in browser, but we want them to
