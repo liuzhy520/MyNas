@@ -32,7 +32,58 @@
 </nav>
 
 <div class="container" ng-if="getCurTitle() == 'My Nas'" ng-controller="nasMainCtrl">
-
+    <div class="list-group" ng-show="!connected">
+        <a href="#" class="list-group-item" ng-repeat="profile in profiles" ng-click="connectProfile(profile.profileId)">
+            <h3 class="list-group-item-heading"><span class="glyphicon glyphicon-hdd"></span>{{profile.profileName}}</h3>
+            <p class="list-group-item-text">{{profile.rootUrl}}</p>
+        </a>
+    </div>
+    <div ng-show="connected">
+        <div class="browser-btn-bar row">
+            <div class="btn-group col-xs-12" role="group">
+                <button class="btn btn-danger" ng-click="disconnect()"><span class="glyphicon glyphicon-flash"></span>Disconnect</button>
+            </div>
+        </div>
+        <div class="list-group entry-list-wrapper">
+            <a href="#" class="list-group-item" ng-repeat="entry in docTree" ng-click="goTo(entry)" on-long-press="showContextMenu(entry)">
+                <span class="glyphicon glyphicon-folder-open" ng-show="entry.isDirectory && !entry.command"></span>
+                <span class="glyphicon glyphicon-file" ng-show="!entry.isDirectory && !entry.command"></span>
+                <span class="glyphicon glyphicon-arrow-up" ng-show="entry.command == 'up'"></span>
+                {{entry.name}}
+            </a>
+        </div>
+    </div>
+    <div class="modal fade" id="entry-menu" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="list-group no-margin">
+                        <a href="#" class="list-group-item active">Rename</a>
+                        <a href="#" class="list-group-item active">Delete</a>
+                        <a href="#" class="list-group-item active" ng-click="showEntryDetails()">Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="entry-details" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="panel panel-primary no-margin">
+                        <div class="panel-heading">
+                            {{curEntryDetail.name}}
+                        </div>
+                        <div class="panel-body">
+                            <p>Created: {{curEntryDetail.created}}</p>
+                            <p>Modified: {{curEntryDetail.lastModified}}</p>
+                            <p>Size: {{curEntryDetail.size}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="container" ng-if="getCurTitle() == 'Settings'" ng-controller="profileSettingsCtrl">
@@ -40,11 +91,11 @@
         <div class="btn-group" style="margin-bottom: 10px;">
             <button class="btn btn-success" ng-click="goToNewProfile()">Create new profile</button>
         </div>
-        <ul class="nav nav-pills nav-stacked">
-            <li class="list-group-item" ng-repeat="profile in profiles" ng-click="viewDetail(profile)">
+        <div class="list-group">
+            <a href="#" class="list-group-item" ng-repeat="profile in profiles" ng-click="viewDetail(profile)">
                 {{profile.profileName}}
-            </li>
-        </ul>
+            </a>
+        </div>
     </div>
     <div ng-if="showDetail">
         <form class="well">
@@ -67,11 +118,6 @@
             <div class="form-group">
                 <label>Password:</label>
                 <input type="password" class="form-control" ng-model="curProfile.password">
-            </div>
-            <div>
-                <label class="control-label">
-                    <checkbox ng-model="curProfile.isSsl"></checkbox> SSL
-                </label>
             </div>
         </form>
         <div class="btn-group">

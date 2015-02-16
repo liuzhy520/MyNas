@@ -1,6 +1,10 @@
 package org.no_ip.zhouzian.mynas.infrastructure;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbFile;
@@ -12,16 +16,38 @@ public class CifsProfile {
     private int portNumber;     //default should be 445, but some old NAS devices use 139
     private String username;
     private String password;
-    private boolean isSsl;
 
-    public CifsProfile (String profileName, String rootUrl, int portNumber, String username, String password, boolean isSsl){
+    public CifsProfile (String profileName, String rootUrl, int portNumber, String username, String password){
         this.profileId = -1;
         this.profileName = profileName.trim();
         this.rootUrl = rootUrl.trim();
         this.portNumber = portNumber;
         this.username = username.trim();
         this.password = password.trim();
-        this.isSsl = isSsl;
+    }
+
+    /* Return a list of entries by the relative path */
+    public List<SmbEntry> browse (String relativePath) throws Exception{
+        List<SmbEntry> ret = new ArrayList<SmbEntry>();
+        SmbFile root = new SmbFile(getSmbInstance(), relativePath);
+        for(SmbFile entry : root.listFiles()) {
+            if (!entry.isHidden()) {
+                ret.add(new SmbEntry(entry.getName(), entry.isDirectory()));
+            }
+        }
+        Collections.sort(ret, new Comparator<SmbEntry>() {
+            @Override
+            public int compare(SmbEntry lhs, SmbEntry rhs) {
+                return -Boolean.compare(lhs.isDirectory(), rhs.isDirectory());
+            }
+        });
+        return ret;
+    }
+
+    /* Returns detail infomation of a smbFile specified by relative path under the root url */
+    public SmbEntryDetail getDetail (String relativePath) throws Exception {
+        SmbFile entry = new SmbFile(getSmbInstance(), relativePath);
+        return new SmbEntryDetail(entry.getName(), entry.isDirectory(), entry.createTime(), entry.lastModified(), entry.length());
     }
 
     /* ProfileId will be reassigned when saved to profile manager
@@ -123,14 +149,6 @@ public class CifsProfile {
 
     public void setPassword(String password) {
         this.password = password.trim();
-    }
-
-    public boolean isSsl() {
-        return isSsl;
-    }
-
-    public void setSsl(boolean isSsl) {
-        this.isSsl = isSsl;
     }
 
 }

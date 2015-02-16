@@ -4,6 +4,7 @@
 }
 .navbar-default .navbar-brand {
   color: #ecf0f1;
+  font-size: x-large;
 }
 .navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {
   color: #ffbbbc;
@@ -13,6 +14,7 @@
 }
 .navbar-default .navbar-nav > li > a {
   color: #ecf0f1;
+  font-size: large;
 }
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
   color: #ffbbbc;
@@ -70,4 +72,53 @@
     color: #ffbbbc;
     background-color: #c0392b;
   }
+}
+
+.list-group-item {
+    over-flow: hidden;
+    text-overflow: ellipsis;
+    font-size: medium;
+}
+
+.list-group-item.active {
+    border-color: #fff;
+}
+.list-group-item.active:hover {
+    background-color: #08467C;
+    border-color: #fff;
+}
+
+.glyphicon {
+    margin-right: 10px;
+}
+
+.btn {
+    font-size: large;
+}
+
+.browser-btn-bar {
+    position: fixed;
+    top: 50px;
+    z-index: 1;
+    width: 100%;
+    padding: 10px 0;
+    background-color: white;
+    box-shadow: 0px 5px 15px 0px rgba(140,140,140,1);
+}
+
+.entry-list-wrapper {
+    position: relative;
+    top: 50px;
+}
+
+.no-margin {
+    margin: 0;
+}
+
+.modal-body {
+    padding: 0;
+}
+
+.modal-dialog {
+    margin-top: 120px;
 }

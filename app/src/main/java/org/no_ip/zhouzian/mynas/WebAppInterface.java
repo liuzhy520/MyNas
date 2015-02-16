@@ -5,11 +5,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
-
 import com.google.gson.Gson;
 import org.no_ip.zhouzian.mynas.infrastructure.CifsProfile;
 import org.no_ip.zhouzian.mynas.infrastructure.CifsProfileManager;
-import java.util.List;
 
 public class WebAppInterface {
     private Context appContext;
@@ -43,12 +41,12 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface
-    public String AddProfile(String profileName, String rootUrl, int portNumber, String username, String password, boolean isSsl){
+    public String AddProfile(String profileName, String rootUrl, int portNumber, String username, String password){
         WebAppResponseStatus status = WebAppResponseStatus.SUCCESS;
         Object data = null;
         String errorMsg = null;
         try {
-            CifsProfile newProfile = new CifsProfile(profileName, rootUrl, portNumber, username, password, isSsl);
+            CifsProfile newProfile = new CifsProfile(profileName, rootUrl, portNumber, username, password);
             ShowLoading("Validating profile...");
             newProfile.validate();
             HideLoading();
@@ -65,12 +63,12 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface
-    public String ModifyProfile(int profileId, String profileName, String rootUrl, int portNumber, String username, String password, boolean isSsl){
+    public String ModifyProfile(int profileId, String profileName, String rootUrl, int portNumber, String username, String password){
         WebAppResponseStatus status = WebAppResponseStatus.SUCCESS;
         Object data = null;
         String errorMsg = null;
         try{
-            CifsProfile profile = new CifsProfile(profileName, rootUrl, portNumber, username, password, isSsl);
+            CifsProfile profile = new CifsProfile(profileName, rootUrl, portNumber, username, password);
             ShowLoading("Validating profile...");
             profile.validate();
             HideLoading();
@@ -95,6 +93,42 @@ public class WebAppInterface {
         try{
             CifsProfileManager.RemoveProfileById(profileId);
         }catch(Exception ex){
+            status = WebAppResponseStatus.ERROR;
+            errorMsg = ex.getMessage();
+            Toast.makeText(appContext, errorMsg, Toast.LENGTH_LONG).show();
+        }
+        Gson gson = new Gson();
+        WebAppResponse response = new WebAppResponse(status, data, errorMsg);
+        return gson.toJson(response);
+    }
+
+    @JavascriptInterface
+    public String Browse(int profileId, String relativePath) {
+        WebAppResponseStatus status = WebAppResponseStatus.SUCCESS;
+        Object data = null;
+        String errorMsg = null;
+        try{
+            CifsProfile profile = CifsProfileManager.GetProfileById(profileId);
+            data = profile.browse(relativePath);
+        } catch (Exception ex) {
+            status = WebAppResponseStatus.ERROR;
+            errorMsg = ex.getMessage();
+            Toast.makeText(appContext, errorMsg, Toast.LENGTH_LONG).show();
+        }
+        Gson gson = new Gson();
+        WebAppResponse response = new WebAppResponse(status, data, errorMsg);
+        return gson.toJson(response);
+    }
+
+    @JavascriptInterface
+    public String Detail(int profileId, String relativePath) {
+        WebAppResponseStatus status = WebAppResponseStatus.SUCCESS;
+        Object data = null;
+        String errorMsg = null;
+        try{
+            CifsProfile profile = CifsProfileManager.GetProfileById(profileId);
+            data = profile.getDetail(relativePath);
+        } catch (Exception ex) {
             status = WebAppResponseStatus.ERROR;
             errorMsg = ex.getMessage();
             Toast.makeText(appContext, errorMsg, Toast.LENGTH_LONG).show();

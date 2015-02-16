@@ -64,7 +64,6 @@ public class CifsProfileManager {
                 tProfile.setPortNumber(profile.getPortNumber());
                 tProfile.setUsername(profile.getUsername());
                 tProfile.setPassword(profile.getPassword());
-                tProfile.setSsl(profile.isSsl());
                 Commit();
             } else {
                 throw new CifsProfileException("Profile name cannot be duplicated");
