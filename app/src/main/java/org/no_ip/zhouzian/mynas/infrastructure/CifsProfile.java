@@ -1,5 +1,8 @@
 package org.no_ip.zhouzian.mynas.infrastructure;
 
+import android.content.Intent;
+import android.net.Uri;
+
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,6 +11,7 @@ import java.util.List;
 
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbFile;
+import jcifs.smb.SmbRandomAccessFile;
 
 public class CifsProfile {
     private int profileId;
@@ -48,6 +52,21 @@ public class CifsProfile {
     public SmbEntryDetail getDetail (String relativePath) throws Exception {
         SmbFile entry = new SmbFile(getSmbInstance(), relativePath);
         return new SmbEntryDetail(entry.getName(), entry.isDirectory(), entry.createTime(), entry.lastModified(), entry.length());
+    }
+
+    /* Opens the file specified by the relative path under the root url */
+    public Intent open (String relativePath) throws Exception {
+        SmbFile file = new SmbFile(getSmbInstance(), relativePath);
+        if (file.isFile()) {
+            StreamOverHttp httpServer = new StreamOverHttp(file, null);
+            Uri uri = httpServer.getUri(file.getName());
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(uri);
+            //intent.setType(httpServer.getFileMimeType());
+            return intent;
+        } else {
+            throw new CifsProfileException("Cannot execute an folder.");
+        }
     }
 
     /* ProfileId will be reassigned when saved to profile manager

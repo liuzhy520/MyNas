@@ -157,6 +157,10 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 				}
 			}
 		}
+		else if (!entry.isDirectory) {		//open file using Android default viewer
+			var path = relativePath.length == 0 ? entry.name : relativePath.join('/') + '/' + entry.name;
+			webAppInterface.Open(selectedProfileId, path);
+		}
 		else if (entry.isDirectory) {		//open folder
 			relativePath.push(entry.name);
 			var response = JSON.parse(webAppInterface.Browse(selectedProfileId, relativePath.join('/')));

@@ -3,6 +3,7 @@ package org.no_ip.zhouzian.mynas;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -140,6 +141,17 @@ public class WebAppInterface {
         Gson gson = new Gson();
         WebAppResponse response = new WebAppResponse(status, data, errorMsg);
         return gson.toJson(response);
+    }
+
+    @JavascriptInterface
+    public void Open (int profileId, String relativePath) {
+        try{
+            CifsProfile profile = CifsProfileManager.GetProfileById(profileId);
+            Intent intent = profile.open(relativePath);
+            appContext.startActivity(intent);
+        } catch (Exception ex) {
+            Toast.makeText(appContext, ex.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     @JavascriptInterface
