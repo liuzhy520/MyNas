@@ -1,5 +1,6 @@
 package org.no_ip.zhouzian.mynas.infrastructure;
 
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.net.Uri;
 
@@ -54,18 +55,18 @@ public class CifsProfile {
         return new SmbEntryDetail(entry.getName(), entry.isDirectory(), entry.createTime(), entry.lastModified(), entry.length());
     }
 
-    /* Opens the file specified by the relative path under the root url */
-    public Intent open (String relativePath) throws Exception {
+    /* Download the file using the given download manager service and return the reference id */
+    public long downloadFile (String relativePath, DownloadManager downloadManager) throws Exception {
         SmbFile file = new SmbFile(getSmbInstance(), relativePath);
         if (file.isFile()) {
             StreamOverHttp httpServer = new StreamOverHttp(file, null);
             Uri uri = httpServer.getUri(file.getName());
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(uri);
-            //intent.setType(httpServer.getFileMimeType());
-            return intent;
+            DownloadManager.Request request = new DownloadManager.Request(uri);
+            request.setTitle(file.getName());
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            return downloadManager.enqueue(request);
         } else {
-            throw new CifsProfileException("Cannot execute an folder.");
+            throw new CifsProfileException("Cannot download folder.");
         }
     }
 

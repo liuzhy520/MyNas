@@ -1,6 +1,7 @@
 package org.no_ip.zhouzian.mynas;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -144,11 +145,12 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface
-    public void Open (int profileId, String relativePath) {
+    public void DownloadFile (int profileId, String relativePath) {
         try{
             CifsProfile profile = CifsProfileManager.GetProfileById(profileId);
-            Intent intent = profile.open(relativePath);
-            appContext.startActivity(intent);
+            DownloadManager downloadManager = (DownloadManager)appContext.getSystemService(Context.DOWNLOAD_SERVICE);
+            long referenceId = profile.downloadFile(relativePath, downloadManager);
+
         } catch (Exception ex) {
             Toast.makeText(appContext, ex.getMessage(), Toast.LENGTH_LONG).show();
         }

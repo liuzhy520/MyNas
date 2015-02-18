@@ -108,6 +108,7 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 	$scope.curEntryDetail = {}		//currently selected entry detail model
 	var relativePath = [];			//list of folder paths leading to current browse view
 	var selectedEntry = null;		//current selected entry name
+	$scope.selectedEntryIsFile = true;	//true is file; false is directory
 	var selectedProfileId = null;	//current profile id in the browse view;
 	var backEntry = {name: 'Up ...', command: 'up'}		//the first element in the docTree. Used for goes back
 	
@@ -181,6 +182,11 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 	/* Show context menu for entry when long-pressed */
 	$scope.showContextMenu = function(entry) {
 		if (!entry.command) {
+			if (entry.isDirectory) {
+				$scope.selectedEntryIsFile = false;
+			} else {
+				$scope.selectedEntryIsFile = true;
+			}
 			webAppInterface.HapticFeedback();
 			selectedEntry = entry.name;
 			$('#entry-menu').modal('show');
@@ -196,6 +202,13 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 				$('#entry-menu').modal('hide');
 				$('#entry-details').modal('show');
 			}
+	}
+	
+	/* Download the selected file */
+	$scope.downloadFile = function () {
+		var path = relativePath.length == 0 ? selectedEntry : relativePath.join('/') + '/' + selectedEntry;
+		webAppInterface.DownloadFile(selectedProfileId, path);
+		$('#entry-menu').modal('hide');
 	}
 	
 }]);
