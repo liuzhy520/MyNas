@@ -28,6 +28,10 @@ var Global = function(){
 	}
 }();
 
+Global.setMenuHandler(function(){
+	$('button.navbar-toggle').trigger('click');
+});
+
 var app = angular.module('myNasApp', ['ui.checkbox']);		//Bootstrap angular app. Declare app module
 
 /* ng-long-press directive */

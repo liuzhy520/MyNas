@@ -43,7 +43,12 @@ public class CifsProfile {
         Collections.sort(ret, new Comparator<SmbEntry>() {
             @Override
             public int compare(SmbEntry lhs, SmbEntry rhs) {
-                return -Boolean.compare(lhs.isDirectory(), rhs.isDirectory());
+                int sComp = -Boolean.compare(lhs.isDirectory(), rhs.isDirectory());
+                if (sComp != 0) {
+                    return sComp;
+                } else {
+                    return lhs.getName().compareTo(rhs.getName());
+                }
             }
         });
         return ret;
@@ -103,7 +108,7 @@ public class CifsProfile {
 
     /* Create a SmbFile instance the can be used to query folders */
     public SmbFile getSmbInstance () throws MalformedURLException {
-        NtlmPasswordAuthentication auth = isAnonymous() ? NtlmPasswordAuthentication.ANONYMOUS : new NtlmPasswordAuthentication("", username, password);    // we don't support domain, so the first parameter is always empty string
+        NtlmPasswordAuthentication auth = isAnonymous() ? new NtlmPasswordAuthentication("", "Guest", "") : new NtlmPasswordAuthentication("", username, password);    // we don't support domain, so the first parameter is always empty string
         return new SmbFile(formatUrl(), auth);
     }
 

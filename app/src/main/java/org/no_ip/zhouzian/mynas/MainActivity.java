@@ -3,6 +3,7 @@ package org.no_ip.zhouzian.mynas;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Window;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -28,6 +29,15 @@ public class MainActivity extends Activity {
         setContentView(webView);
         webView.loadUrl("file:///android_asset/view/home/main_page.html");      //Load single page AngularJS app
         initializeJSInterface();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            webView.loadUrl("javascript:Global.onMenuClicked()");
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override

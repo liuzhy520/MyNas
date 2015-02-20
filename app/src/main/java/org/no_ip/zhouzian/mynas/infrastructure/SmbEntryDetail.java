@@ -1,5 +1,6 @@
 package org.no_ip.zhouzian.mynas.infrastructure;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 
 public class SmbEntryDetail extends SmbEntry{
@@ -39,14 +40,15 @@ public class SmbEntryDetail extends SmbEntry{
     }
 
     private String getSizeStr (long size) {
+        DecimalFormat df = new DecimalFormat("#.##");
         if (size / 1024 < 1) {
             return size + " bytes";
-        } else if (size / 1024 / 2014 < 1) {
-            return (size / 1024) + " KB";
-        } else if (size / 1024 / 1024 / 1024 < 1) {
-            return (size / 1024 / 1024) + " MB";
+        } else if ((double)size / 1024 / 1024 < 1) {
+            return df.format((double)size / 1024) + " KB";
+        } else if ((double)size / 1024 / 1024 / 1024 < 1) {
+            return df.format((double)size / 1024 / 1024) + " MB";
         } else {
-            return (size / 2014 / 2014 / 1024) + " GB";
+            return df.format((double)size / 1024 / 1024 / 1024) + " GB";
         }
     }
 }

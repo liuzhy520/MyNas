@@ -110,7 +110,7 @@ public class StreamOverHttp{
                 InputStream inS = socket.getInputStream();
                 if(inS == null)
                     return;
-                byte[] buf = new byte[8192];
+                byte[] buf = new byte[81920];
                 int rlen = inS.read(buf, 0, buf.length);
                 if(rlen <= 0)
                     return;
@@ -130,12 +130,12 @@ public class StreamOverHttp{
                     headers.put("Content-Length", String.valueOf(fileSize));
                 headers.put("Accept-Ranges", canSeek ? "bytes" : "none");
 
-                int sendCount;
+                long sendCount;
 
                 String status;
                 if(range==null || !canSeek) {
                     status = "200 OK";
-                    sendCount = (int)fileSize;
+                    sendCount = fileSize;
                 }else {
                     if(!range.startsWith("bytes=")){
                         sendError(socket, HTTP_416, null);
@@ -163,7 +163,7 @@ public class StreamOverHttp{
                     }
                     if(endAt < 0)
                         endAt = fileSize - 1;
-                    sendCount = (int)(endAt - startFrom + 1);
+                    sendCount = (endAt - startFrom + 1);
                     if(sendCount < 0)
                         sendCount = 0;
                     status = "206 Partial Content";
@@ -278,7 +278,7 @@ public class StreamOverHttp{
     /**
      * Sends given response to the socket, and closes the socket.
      */
-    private static void sendResponse(Socket socket, String status, String mimeType, Properties header, InputStream isInput, int sendCount, byte[] buf, String errMsg){
+    private static void sendResponse(Socket socket, String status, String mimeType, Properties header, InputStream isInput, long sendCount, byte[] buf, String errMsg){
         try{
             OutputStream out = socket.getOutputStream();
             PrintWriter pw = new PrintWriter(out);
@@ -312,9 +312,7 @@ public class StreamOverHttp{
             out.flush();
             out.close();
         }catch(IOException e){
-            if(debug) {
-                //BrowserUtils.LOGRUN(e.getMessage());
-            }
+            e.printStackTrace();
         }finally {
             try{
                 socket.close();
@@ -334,11 +332,12 @@ public class StreamOverHttp{
     }
 
     private InputStream openRandomAccessInputStream (SmbFile file){
-        try {
+        return null;
+        /*try {
             return new RandomAccessInputStream(file);
         } catch (Exception ex) {
             return null;
-        }
+        }*/
     }
 
     /**
