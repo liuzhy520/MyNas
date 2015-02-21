@@ -10,6 +10,8 @@ import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 import com.google.gson.Gson;
+
+import org.no_ip.zhouzian.mynas.infrastructure.CifsDownloadManager;
 import org.no_ip.zhouzian.mynas.infrastructure.CifsProfile;
 import org.no_ip.zhouzian.mynas.infrastructure.CifsProfileManager;
 
@@ -27,6 +29,9 @@ public class WebAppInterface {
         loadingDlg.setCancelable(false);
         if (!CifsProfileManager.IsInitialized()){
             CifsProfileManager.Init(context);
+        }
+        if (!CifsDownloadManager.IsInitialized()){
+            CifsDownloadManager.Init(context);
         }
     }
     @JavascriptInterface

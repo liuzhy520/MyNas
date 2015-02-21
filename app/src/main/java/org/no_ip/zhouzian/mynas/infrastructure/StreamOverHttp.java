@@ -175,9 +175,6 @@ public class StreamOverHttp{
                 }
                 sendResponse(socket, status, fileMimeType, headers, is, sendCount, buf, null);
                 inS.close();
-                if(debug) {
-                    //BrowserUtils.LOGRUN("Http stream finished");
-                }
             }catch(IOException ioe){
                 if(debug)
                     ioe.printStackTrace();
@@ -186,9 +183,7 @@ public class StreamOverHttp{
                 }catch(Throwable t){
                 }
             }catch(InterruptedException ie){
-                // thrown by sendError, ignore and exit the thread
-                if(debug)
-                    ie.printStackTrace();
+                ie.printStackTrace();
             }
         }
 
@@ -213,7 +208,6 @@ public class StreamOverHttp{
                     String line = in.readLine();
                     if(line==null)
                         break;
-                    //            if(debug && line.length()>0) BrowserUtils.LOGRUN(line);
                     int p = line.indexOf(':');
                     if(p<0)
                         continue;
@@ -246,7 +240,6 @@ public class StreamOverHttp{
         return mimeMap.getMimeType(getExtension(file));
     }
     public void close(){
-        //BrowserUtils.LOGRUN("Closing stream over http");
         try{
             serverSocket.close();
             mainThread.join();
@@ -297,7 +290,6 @@ public class StreamOverHttp{
                     String key = (String)e.nextElement();
                     String value = header.getProperty(key);
                     String l = key + ": " + value + "\r\n";
-//               if(debug) BrowserUtils.LOGRUN(l);
                     pw.print(l);
                 }
             }
@@ -332,12 +324,11 @@ public class StreamOverHttp{
     }
 
     private InputStream openRandomAccessInputStream (SmbFile file){
-        return null;
-        /*try {
+        try {
             return new RandomAccessInputStream(file);
         } catch (Exception ex) {
             return null;
-        }*/
+        }
     }
 
     /**
