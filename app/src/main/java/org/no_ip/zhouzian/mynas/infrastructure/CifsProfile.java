@@ -3,7 +3,9 @@ package org.no_ip.zhouzian.mynas.infrastructure;
 import android.app.DownloadManager;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,16 +62,12 @@ public class CifsProfile {
         return new SmbEntryDetail(entry.getName(), entry.isDirectory(), entry.createTime(), entry.lastModified(), entry.length());
     }
 
-    /* Download the file using the given download manager service and return the reference id */
-    public long downloadFile (String relativePath, DownloadManager downloadManager) throws Exception {
+    /* Download the file using CifsDownloadManager class */
+    public void downloadFile (String relativePath) throws Exception {
         SmbFile file = new SmbFile(getSmbInstance(), relativePath);
         if (file.isFile()) {
-            StreamOverHttp httpServer = new StreamOverHttp(file, null);
-            Uri uri = httpServer.getUri(file.getName());
-            DownloadManager.Request request = new DownloadManager.Request(uri);
-            request.setTitle(file.getName());
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-            return downloadManager.enqueue(request);
+            File destFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            CifsDownloadManager.AddJob(file, destFolder);
         } else {
             throw new CifsProfileException("Cannot download folder.");
         }

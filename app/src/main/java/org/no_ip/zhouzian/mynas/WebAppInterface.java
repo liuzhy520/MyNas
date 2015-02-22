@@ -153,9 +153,7 @@ public class WebAppInterface {
     public void DownloadFile (int profileId, String relativePath) {
         try{
             CifsProfile profile = CifsProfileManager.GetProfileById(profileId);
-            DownloadManager downloadManager = (DownloadManager)appContext.getSystemService(Context.DOWNLOAD_SERVICE);
-            long referenceId = profile.downloadFile(relativePath, downloadManager);
-
+            profile.downloadFile(relativePath);
         } catch (Exception ex) {
             Toast.makeText(appContext, ex.getMessage(), Toast.LENGTH_LONG).show();
         }
