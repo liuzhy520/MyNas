@@ -34,11 +34,13 @@ public class DownloadJoblet {
         if (status == DownloadStatus.IN_PROGRESS) {
             //TODO: stop the downloading
         }
+        status = DownloadStatus.CANCELLED;
     }
 
     public void Execute() {
         status = DownloadStatus.IN_PROGRESS;
         //TODO: start the download job
+        status = DownloadStatus.FINISHED;
     }
 
     public String getJobId() {
@@ -77,6 +79,7 @@ public class DownloadJoblet {
         WAITING,        //when the job is created and waiting in the queue
         IN_PROGRESS,    //when the job has been started
         FINISHED,       //when the job has been finished successfully
-        TERMINATED      //when the job is terminated on exception
+        TERMINATED,     //when the job is terminated on exception
+        CANCELLED       //when the job is cancelled by user
     }
 }
