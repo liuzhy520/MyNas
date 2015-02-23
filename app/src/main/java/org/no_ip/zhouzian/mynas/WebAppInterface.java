@@ -154,9 +154,27 @@ public class WebAppInterface {
         try{
             CifsProfile profile = CifsProfileManager.GetProfileById(profileId);
             profile.downloadFile(relativePath);
+            Toast.makeText(appContext, "Download will be scheduled shortly.", Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
             Toast.makeText(appContext, ex.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    @JavascriptInterface
+    public String GetAllDownloads () {
+        WebAppResponseStatus status = WebAppResponseStatus.SUCCESS;
+        Object data = null;
+        String errorMsg = null;
+        try{
+            data = CifsDownloadManager.GetAllJobStatus();
+        } catch (Exception ex) {
+            status = WebAppResponseStatus.ERROR;
+            errorMsg = ex.getMessage();
+            Toast.makeText(appContext, errorMsg, Toast.LENGTH_LONG).show();
+        }
+        Gson gson = new Gson();
+        WebAppResponse response = new WebAppResponse(status, data, errorMsg);
+        return gson.toJson(response);
     }
 
     @JavascriptInterface

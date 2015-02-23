@@ -12,7 +12,7 @@ public class SmbEntryDetail extends SmbEntry{
         super (name, isDirectory);
         this.created = new Date(created).toString();
         this.lastModified = new Date(lastModified).toString();
-        this.size = getSizeStr(size);
+        this.size = Formatter.FormatFileSize(size);
     }
 
     public String getCreated() {
@@ -36,19 +36,7 @@ public class SmbEntryDetail extends SmbEntry{
     }
 
     public void setSize(long size) {
-        this.size = getSizeStr(size);
+        this.size = Formatter.FormatFileSize(size);
     }
 
-    private String getSizeStr (long size) {
-        DecimalFormat df = new DecimalFormat("#.##");
-        if (size / 1024 < 1) {
-            return size + " bytes";
-        } else if ((double)size / 1024 / 1024 < 1) {
-            return df.format((double)size / 1024) + " KB";
-        } else if ((double)size / 1024 / 1024 / 1024 < 1) {
-            return df.format((double)size / 1024 / 1024) + " MB";
-        } else {
-            return df.format((double)size / 1024 / 1024 / 1024) + " GB";
-        }
-    }
 }

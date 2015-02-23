@@ -78,11 +78,14 @@ app.controller('navCtrl', ['$scope', function($scope){		//Navigation controller
     $scope.tabs = [{display_name: APP_TITLE,
 					idx: 0,
 					selected: true},
+					{display_name: 'Downloads',
+					idx: 1,
+					selected: false},
 					{display_name: 'Settings',
-                    idx: 1,
+                    idx: 2,
                     selected: false},
                     {display_name: 'About',
-                    idx: 2,
+                    idx: 3,
                     selected: false}];
 	/* Select a tab by its idx */
     $scope.selectTab = function(idx){
@@ -215,6 +218,27 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 		$('#entry-menu').modal('hide');
 	}
 	
+}]);
+
+/* Downloads controller */
+app.controller('downloadsCtrl', ['$scope', 'interval', function($scope, $interval){
+	//get all downloads including finished downloads, and download in the queue
+	$scope.getDownloads = function(){
+		var response = JSON.parse(webAppInterface.GetAllDownloads());
+		if (response.status == 'SUCCESS'){
+			$scope.downloads = response.data;
+		} else {
+			$scope.downloads = [];
+		}
+	}
+	
+	//refresh downloads every 3 seconds
+	var downloadsHandler = $interval($scope.getDownloads, 3000);
+	
+	//destroy the downloads handler to stop refreshing when the page is not visible
+	$scope.$on('$destroy', function() {
+		$interval.cancel(downloadsHandler);
+    });
 }]);
 
 /* Profile controller */

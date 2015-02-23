@@ -47,9 +47,21 @@ public class CifsDownloadManager {
         jobConsumerThread.start();
     }
 
-    /* Get the totall number of jobs in the queue */
-    static public int getTotalJobCount () {
+    /* Get the total number of jobs in the queue */
+    static public int GetJobCountInQueue () {
         return queue.size();
+    }
+
+    /* Get all jobs and their status */
+    static public List<DownloadDC> GetAllJobStatus () {
+        List<DownloadDC> ret = new ArrayList<DownloadDC>();
+        for (DownloadJoblet finishedJob : history) {
+            ret.add(new DownloadDC(finishedJob));
+        }
+        for (DownloadJoblet job : queue) {
+            ret.add(new DownloadDC(job));
+        }
+        return ret;
     }
 
     /* Add a new job to the job queue */
