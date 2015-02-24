@@ -88,7 +88,14 @@
 </div>
 
 <div class="container" ng-if="getCurTitle() == 'Downloads'" ng-controller="downloadsCtrl">
-
+    <div ng-repeat="job in downloads" class="alert" ng-class="getBgColor(job)">
+        <p>{{job.destFileName}}; {{job.speed}}; {{job.fileSize}}</p>
+        <div class="progress">
+            <div class="progress-bar" ng-class="getProgressStyle(job)" style="min-width: 2em; width: {{job.progress}}">
+                {{job.progress}}
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="container" ng-if="getCurTitle() == 'Settings'" ng-controller="profileSettingsCtrl">

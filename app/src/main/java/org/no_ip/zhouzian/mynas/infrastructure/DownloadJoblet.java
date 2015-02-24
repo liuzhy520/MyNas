@@ -132,7 +132,7 @@ public class DownloadJoblet {
     /* Updates the progress of the job */
     private void UpdateProgress(long finishedBytes, long totalBytes) {
         if (totalBytes != 0) {
-            progress = (int) (finishedBytes / totalBytes);
+            progress = (int) (finishedBytes * 100 / totalBytes);
         }
     }
 

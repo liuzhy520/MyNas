@@ -13,7 +13,7 @@ public class DownloadDC {
         this.jobId = joblet.getJobId();
         this.destFileName = joblet.getDestFileName();
         this.fileSize = Formatter.FormatFileSize(joblet.getFileSize());
-        this.progress = joblet.getProgress() + " %";
+        this.progress = joblet.getProgress() + "%";
         this.speed = Formatter.FormatFileSize(joblet.getSpeed()) + "/s";
         this.status = joblet.getStatus();
     }

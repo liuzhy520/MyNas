@@ -32,11 +32,12 @@ public class CifsDownloadManager {
             public void run(){
                 while (true) {
                     try {
-                        if (currentJob != null && currentJob.getStatus() == DownloadJoblet.DownloadStatus.FINISHED) {
-                            history.add(currentJob);
-                        }
                         currentJob = queue.take();
                         currentJob.Execute();
+                        if (currentJob.getStatus() == DownloadJoblet.DownloadStatus.FINISHED) {
+                            history.add(currentJob);
+                        }
+                        currentJob = null;
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -55,11 +56,14 @@ public class CifsDownloadManager {
     /* Get all jobs and their status */
     static public List<DownloadDC> GetAllJobStatus () {
         List<DownloadDC> ret = new ArrayList<DownloadDC>();
-        for (DownloadJoblet finishedJob : history) {
-            ret.add(new DownloadDC(finishedJob));
+        if (currentJob != null) {
+            ret.add(new DownloadDC(currentJob));
         }
         for (DownloadJoblet job : queue) {
             ret.add(new DownloadDC(job));
+        }
+        for (DownloadJoblet finishedJob : history) {
+            ret.add(new DownloadDC(finishedJob));
         }
         return ret;
     }

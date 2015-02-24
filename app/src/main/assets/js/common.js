@@ -221,7 +221,7 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 }]);
 
 /* Downloads controller */
-app.controller('downloadsCtrl', ['$scope', 'interval', function($scope, $interval){
+app.controller('downloadsCtrl', ['$scope', '$interval', function($scope, $interval){
 	//get all downloads including finished downloads, and download in the queue
 	$scope.getDownloads = function(){
 		var response = JSON.parse(webAppInterface.GetAllDownloads());
@@ -233,12 +233,36 @@ app.controller('downloadsCtrl', ['$scope', 'interval', function($scope, $interva
 	}
 	
 	//refresh downloads every 3 seconds
+	$scope.getDownloads();		//get the download immediately when the controller is initialized
 	var downloadsHandler = $interval($scope.getDownloads, 3000);
 	
 	//destroy the downloads handler to stop refreshing when the page is not visible
 	$scope.$on('$destroy', function() {
 		$interval.cancel(downloadsHandler);
     });
+	
+	//get the background color class a job
+	$scope.getBgColor = function(job) {
+		switch(job.status) {
+			case 'WAITING' : return 'alert-warning';
+			case 'IN_PROGRESS' : return 'alert-success';
+			case 'FINISHED' : return 'alert-info';
+			case 'TERMINATED' : return 'alert-danger';
+			case 'CANCELLED' : return 'alert-danger';
+			default: return '';
+		}
+	}
+	
+	$scope.getProgressStyle = function(job) {
+		switch(job.status) {
+			case 'WAITING' : return 'progress-bar-striped';
+			case 'IN_PROGRESS' : return 'progress-bar-striped active';
+			case 'FINISHED' : return '';
+			case 'TERMINATED' : return '';
+			case 'CANCELLED' : return '';
+			default: return '';
+		}
+	}
 }]);
 
 /* Profile controller */
