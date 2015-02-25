@@ -178,6 +178,16 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface
+    public void StopJob (String jobId) {
+        CifsDownloadManager.RemoveJob(jobId);
+    }
+
+    @JavascriptInterface
+    public void RemoveHistory (String jobId) {
+        CifsDownloadManager.RemoveHistory(jobId);
+    }
+
+    @JavascriptInterface
     public void HapticFeedback () {
         webView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
     }

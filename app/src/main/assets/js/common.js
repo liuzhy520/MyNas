@@ -253,6 +253,7 @@ app.controller('downloadsCtrl', ['$scope', '$interval', function($scope, $interv
 		}
 	}
 	
+	//use different style of progress bar for different status
 	$scope.getProgressStyle = function(job) {
 		switch(job.status) {
 			case 'WAITING' : return 'progress-bar-striped';
@@ -262,6 +263,16 @@ app.controller('downloadsCtrl', ['$scope', '$interval', function($scope, $interv
 			case 'CANCELLED' : return '';
 			default: return '';
 		}
+	}
+	
+	//stop or cancel a job
+	$scope.stopJob = function(job) {
+		webAppInterface.StopJob(job.jobId);
+	}
+	
+	//remove the download history
+	$scope.removeHistory = function(job) {
+		webAppInterface.RemoveHistory(job.jobId);
 	}
 }]);
 

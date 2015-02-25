@@ -34,9 +34,7 @@ public class CifsDownloadManager {
                     try {
                         currentJob = queue.take();
                         currentJob.Execute();
-                        if (currentJob.getStatus() == DownloadJoblet.DownloadStatus.FINISHED) {
-                            history.add(currentJob);
-                        }
+                        history.add(0, currentJob);
                         currentJob = null;
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -91,8 +89,24 @@ public class CifsDownloadManager {
                 }
             }
             if (jobToRemove != null) {
+                jobToRemove.setStatus(DownloadJoblet.DownloadStatus.CANCELLED);
+                history.add(0, jobToRemove);
                 queue.remove(jobToRemove);
             }
+        }
+    }
+
+    /* Remove the job history from history array */
+    static public void RemoveHistory (String jobId) {
+        DownloadJoblet jobToRemove = null;
+        for (DownloadJoblet job : history) {
+            if (job.getJobId().equals(jobId)) {
+                jobToRemove = job;
+                break;
+            }
+        }
+        if (jobToRemove != null) {
+            history.remove(jobToRemove);
         }
     }
 }

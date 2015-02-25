@@ -182,6 +182,10 @@ public class DownloadJoblet {
         return speed;
     }
 
+    public void setStatus(DownloadStatus status) {
+        this.status = status;
+    }
+
     public DownloadStatus getStatus() {
         return status;
     }

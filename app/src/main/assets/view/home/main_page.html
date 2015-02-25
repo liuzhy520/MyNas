@@ -89,12 +89,16 @@
 
 <div class="container" ng-if="getCurTitle() == 'Downloads'" ng-controller="downloadsCtrl">
     <div ng-repeat="job in downloads" class="alert" ng-class="getBgColor(job)">
-        <p>{{job.destFileName}}; {{job.speed}}; {{job.fileSize}}</p>
+        <p>{{job.destFileName}}({{job.fileSize}})</p>
+        <p ng-show="job.status=='IN_PROGRESS' || job.status=='WAITING'">{{job.speed}}</p>
         <div class="progress">
             <div class="progress-bar" ng-class="getProgressStyle(job)" style="min-width: 2em; width: {{job.progress}}">
                 {{job.progress}}
             </div>
         </div>
+        <button ng-show="job.status=='IN_PROGRESS'" ng-click="stopJob(job)" class="btn btn-link btn-xs">Stop</button>
+        <button ng-show="job.status=='WAITING'" ng-click="stopJob(job)" class="btn btn-link btn-xs">Cancel</button>
+        <button ng-show="job.status=='FINISHED' || job.status=='TERMINATED' || job.status=='CANCELLED'" ng-click="removeHistory(job)" class="btn btn-link btn-xs">Remove</button>
     </div>
 </div>
 
