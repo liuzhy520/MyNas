@@ -10,8 +10,12 @@ var Global = function(){
 			backHandler = null;
 		},
 		onBackClicked: function(){
-			if (typeof backHandler == 'function') {
-				backHandler();
+			if ($(".navbar-collapse").hasClass("in")) {		//always first try to close the opened nav menu
+				menuHandler();
+			} else {
+				if (typeof backHandler == 'function') {
+					backHandler();
+				}
 			}
 		},
 		setMenuHandler: function(funcRef){
