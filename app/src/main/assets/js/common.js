@@ -111,6 +111,7 @@ app.controller('navCtrl', ['$scope', function($scope){		//Navigation controller
 /* Main page controller */
 app.controller('nasMainCtrl', ['$scope', function($scope){
 	$scope.connected = false;		//true means browse view; false means profile list view
+	$scope.profiles = [];			//list of pre-configured profiles
 	$scope.docTree = [];			//list of entries in the current browse view.
 	$scope.curEntryDetail = {}		//currently selected entry detail model
 	var relativePath = [];			//list of folder paths leading to current browse view
@@ -222,6 +223,7 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 
 /* Downloads controller */
 app.controller('downloadsCtrl', ['$scope', '$interval', function($scope, $interval){
+	$scope.downloads = [];
 	//get all downloads including finished downloads, and download in the queue
 	$scope.getDownloads = function(){
 		var response = JSON.parse(webAppInterface.GetAllDownloads());

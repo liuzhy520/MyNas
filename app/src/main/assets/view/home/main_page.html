@@ -32,11 +32,17 @@
 </nav>
 
 <div class="container" ng-if="getCurTitle() == 'My Nas'" ng-controller="nasMainCtrl">
-    <div class="list-group" ng-show="!connected">
-        <a href="#" class="list-group-item" ng-repeat="profile in profiles" ng-click="connectProfile(profile.profileId)">
-            <h3 class="list-group-item-heading"><span class="glyphicon glyphicon-hdd"></span>{{profile.profileName}}</h3>
-            <p class="list-group-item-text">{{profile.rootUrl}}</p>
-        </a>
+    <div class="row" ng-show="!connected">
+        <div class="col-xs-12">
+            <div class="alert alert-info" ng-show="profiles.length==0">
+                <strong>You have not any profiles yet.</strong>
+                <p>Create your first profile in Settings page by pressing <strong>Menu</strong> button and tap <strong>Settings</strong>!</p>
+            </div>
+            <a href="#" class="thumbnail" ng-repeat="profile in profiles" ng-click="connectProfile(profile.profileId)">
+                <h4 style="font-weight: bold;"><span class="glyphicon glyphicon-hdd"></span>{{profile.profileName}}</h4>
+                <p>{{profile.rootUrl}}</p>
+            </a>
+        </div>
     </div>
     <div ng-show="connected">
         <div class="browser-btn-bar row">
@@ -88,6 +94,9 @@
 </div>
 
 <div class="container" ng-if="getCurTitle() == 'Downloads'" ng-controller="downloadsCtrl">
+    <div class="alert alert-info" ng-show="downloads.length==0">
+        <strong>Your download history is empty.</strong>
+    </div>
     <div ng-repeat="job in downloads" class="alert" ng-class="getBgColor(job)">
         <p>{{job.destFileName}}({{job.fileSize}})</p>
         <p ng-show="job.status=='IN_PROGRESS' || job.status=='WAITING'">{{job.speed}}</p>
@@ -96,9 +105,9 @@
                 {{job.progress}}
             </div>
         </div>
-        <button ng-show="job.status=='IN_PROGRESS'" ng-click="stopJob(job)" class="btn btn-link btn-xs">Stop</button>
-        <button ng-show="job.status=='WAITING'" ng-click="stopJob(job)" class="btn btn-link btn-xs">Cancel</button>
-        <button ng-show="job.status=='FINISHED' || job.status=='TERMINATED' || job.status=='CANCELLED'" ng-click="removeHistory(job)" class="btn btn-link btn-xs">Remove</button>
+        <button ng-show="job.status=='IN_PROGRESS'" ng-click="stopJob(job)" class="btn btn-danger btn-xs">Stop</button>
+        <button ng-show="job.status=='WAITING'" ng-click="stopJob(job)" class="btn btn-danger btn-xs">Cancel</button>
+        <button ng-show="job.status=='FINISHED' || job.status=='TERMINATED' || job.status=='CANCELLED'" ng-click="removeHistory(job)" class="btn btn-danger btn-xs">Remove</button>
     </div>
 </div>
 
@@ -124,7 +133,7 @@
                 <input class="form-control" ng-model="curProfile.rootUrl">
             </div>
 			<div class="form-group">
-                <label>Port:</label>
+                <label>Port (445 or 139):</label>
                 <input type="number" class="form-control" ng-model="curProfile.portNumber">
             </div>
             <div class="form-group">

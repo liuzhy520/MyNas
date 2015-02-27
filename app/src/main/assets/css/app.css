@@ -96,6 +96,15 @@
     font-size: large;
 }
 
+.thumbnail {
+    padding: 0 20px;
+    box-shadow: 0px 5px 10px 0px rgba(140,140,140,1);
+}
+
+a.thumbnail:hover {
+    text-decoration: none;
+}
+
 .browser-btn-bar {
     position: fixed;
     top: 50px;
