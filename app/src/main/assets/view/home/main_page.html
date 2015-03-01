@@ -160,5 +160,11 @@
         <button class="btn btn-success pull-right" ng-show="curProfile.profileId == -1" ng-click="createProfile()" ng-disabled="wait">Create</button>
     </div>
 </div>
+
+<div class="container" ng-if="getCurTitle() == 'About'">
+    <p>My NAS lets you browse CIFS (Windows) shared folders in your home network.</p>
+    <p>Project started from Jan 2015.</p>
+    <p>For Wen and Daniel.</p>
+</div>
 </body>
 </html>
