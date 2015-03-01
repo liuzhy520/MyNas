@@ -86,6 +86,18 @@ public class CifsProfileManager {
         }
     }
 
+    static public String CreateProfileShortCut(int profileId, String relativePath) {
+        CifsProfile tProfile = GetProfileById(profileId);
+        CifsProfile newProfile = tProfile.createShortCut(relativePath);
+        if (IsProfileNameDup(newProfile.getProfileName(), -1)) {
+            newProfile.setProfileName(newProfile.getProfileName() + "_New");
+        }
+        newProfile.setProfileId(GetNextId());
+        profiles.add(newProfile);
+        Commit();
+        return newProfile.getProfileName();
+    }
+
     /* Load profiles from shared preferences */
     static private void Load(){
         Gson gson = new Gson();

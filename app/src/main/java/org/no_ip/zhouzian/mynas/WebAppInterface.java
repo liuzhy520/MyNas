@@ -150,6 +150,16 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface
+    public void CreateProfileShortcut (int profileId, String relativePath) {
+        try{
+            String newProfileName = CifsProfileManager.CreateProfileShortCut(profileId, relativePath);
+            Toast.makeText(appContext, "New profile: \"" + newProfileName + "\" is created.", Toast.LENGTH_LONG).show();
+        } catch (Exception ex) {
+            Toast.makeText(appContext, ex.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @JavascriptInterface
     public void DownloadFile (int profileId, String relativePath) {
         try{
             CifsProfile profile = CifsProfileManager.GetProfileById(profileId);

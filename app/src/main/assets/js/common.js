@@ -147,6 +147,13 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 	function closeModal() {
 		$('.modal').modal('hide');
 	}
+	function removeTailingSlash(entryName) {
+		if (_.isString(entryName) && _.endsWith(entryName, '/')) {
+			return entryName.substring(0, entryName.length - 1);
+		} else {
+			return entryName;
+		}
+	}
 	reloadProfiles();
 	
 	$scope.connectProfile = function(profileId){
@@ -166,28 +173,38 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 			if (isModalOpened()) {	//close popup menu dialog when Back hardware is clicked
 				closeModal();
 			}
+			else if (relativePath.length == 0) {
+				$scope.disconnect();
+				if (entry == null) {
+					$scope.$apply();
+				}
+			}
 			else if (relativePath.length != 0) {
-				relativePath.pop();
-				$scope.loadDocTree();
+				var last = relativePath.pop();
+				if (!$scope.loadDocTree()) {
+					relativePath.push(last);		//if operation fails, push the entry back
+				}
 				if (entry == null) {	//called from Java code. Need to manually call $apply().
 					$scope.$apply();
 				}
 			}
 		}
 		else if (!entry.isDirectory) {		//open file using Android default viewer
-			var path = relativePath.length == 0 ? entry.name : relativePath.join('/') + '/' + entry.name;
-			webAppInterface.Open(selectedProfileId, path);
+			//TODO: not implemented yet.
 		}
 		else if (entry.isDirectory) {		//open folder
-			relativePath.push(entry.name);
-			$scope.loadDocTree();
+			relativePath.push(removeTailingSlash(entry.name));
+			if (!$scope.loadDocTree()) {
+				relativePath.pop();			//if operation fails, remove the entry
+			}
 		}
 	}
 	
 	/* Load cifs doc tree using the current orderBy option and relative path
 	   Return boolean value indicating success or fail */
 	$scope.loadDocTree = function () {
-		var response = JSON.parse(webAppInterface.Browse(selectedProfileId, relativePath.join('/'), $scope.orderBy));
+		var path = relativePath.length == 0 ? '' : relativePath.join('/') + '/';
+		var response = JSON.parse(webAppInterface.Browse(selectedProfileId, path, $scope.orderBy));
 		if (response.status == 'SUCCESS') {
 			$scope.docTree = response.data;
 			$scope.docTree.unshift(backEntry);
@@ -199,6 +216,7 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 	
 	/* Return to the profile list view */
 	$scope.disconnect = function(){
+		reloadProfiles();
 		$scope.connected = false;
 		selectedProfileId = null;
 		Global.resetBackHandler();
@@ -213,7 +231,7 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 				$scope.selectedEntryIsFile = true;
 			}
 			webAppInterface.HapticFeedback();
-			selectedEntry = entry.name;
+			selectedEntry = removeTailingSlash(entry.name);
 			$('#entry-menu').modal('show');
 		}
 	}
@@ -233,6 +251,13 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 	$scope.downloadFile = function () {
 		var path = relativePath.length == 0 ? selectedEntry : relativePath.join('/') + '/' + selectedEntry;
 		webAppInterface.DownloadFile(selectedProfileId, path);
+		$('#entry-menu').modal('hide');
+	}
+	
+	/* Create a profile linking to the folder */
+	$scope.createProfileShortCut = function () {
+		var path = relativePath.length == 0 ? selectedEntry : relativePath.join('/') + '/' + selectedEntry;
+		webAppInterface.CreateProfileShortcut(selectedProfileId, path);
 		$('#entry-menu').modal('hide');
 	}
 	

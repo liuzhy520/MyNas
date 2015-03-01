@@ -129,8 +129,20 @@ public class CifsProfile {
         return new SmbFile(formatUrl(), auth);
     }
 
+    /* Create a shortcut profile based on the relativePath
+     * The new profile name is based on best guess, so still needs duplication check before persisting */
+    public CifsProfile createShortCut (String relativePath) {
+        String newRootUrl = rootUrl, newProfileName;
+        if (!newRootUrl.endsWith("/")){
+            newRootUrl += "/";
+        }
+        newRootUrl += relativePath;
+        String[] paths = relativePath.split("/");
+        return new CifsProfile(paths[paths.length - 1], newRootUrl, this.portNumber, this.username, this.password);
+    }
+
     /* Insert port number to url if the port number is not 445.
-     * Added trailing slash is it's not there. */
+     * Added trailing slash if it's not there. */
     private String formatUrl (){
         StringBuilder sb = new StringBuilder();
         String[] paths = rootUrl.split("/");
