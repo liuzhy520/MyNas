@@ -10,7 +10,7 @@ var Global = function(){
 			backHandler = null;
 		},
 		onBackClicked: function(){
-			if ($(".navbar-collapse").hasClass("in")) {		//always first try to close the opened nav menu
+			if ($('.navbar-collapse').hasClass('in')) {		//always first try to close the opened nav menu
 				menuHandler();
 			} else {
 				if (typeof backHandler == 'function') {
@@ -123,6 +123,15 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 	$scope.selectedEntryIsFile = true;	//true is file; false is directory
 	var selectedProfileId = null;	//current profile id in the browse view;
 	var backEntry = {name: 'Up ...', command: 'up'}		//the first element in the docTree. Used for goes back
+	$scope.orderBy = 'typeAsc';		//default sort
+	
+	/* Order by options */
+	$scope.sortOpts = [{label: 'Name Asc', value: 'nameAsc'},
+						{label: 'Name Desc', value: 'nameDesc'},
+						{label: 'Date Modified Asc', value: 'dateAsc'},
+						{label: 'Date Modified Desc', value: 'dateDesc'},
+						{label: 'Folder First', value: 'typeAsc'},
+						{label: 'File First', value: 'typeDesc'}];
 	
 	function reloadProfiles (){
 		 var response = JSON.parse(webAppInterface.GetAllProfiles());
@@ -142,13 +151,12 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 	
 	$scope.connectProfile = function(profileId){
 		relativePath = [];	//need to reset the relative path array.
-		var response = JSON.parse(webAppInterface.Browse(profileId, ''));
-		if (response.status == 'SUCCESS') {
-			$scope.docTree = response.data;
-			$scope.docTree.unshift(backEntry);
-			selectedProfileId = profileId;
+		selectedProfileId = profileId;
+		if ($scope.loadDocTree()) {
 			$scope.connected = true;
 			Global.setBackHandler($scope.goTo);
+		} else {
+			selectedProfileId = null;
 		}
 	}
 	
@@ -160,11 +168,7 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 			}
 			else if (relativePath.length != 0) {
 				relativePath.pop();
-				var response = JSON.parse(webAppInterface.Browse(selectedProfileId, relativePath.join('/')));
-				if (response.status == 'SUCCESS') {
-					$scope.docTree = response.data;
-					$scope.docTree.unshift(backEntry);
-				}
+				$scope.loadDocTree();
 				if (entry == null) {	//called from Java code. Need to manually call $apply().
 					$scope.$apply();
 				}
@@ -176,11 +180,20 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 		}
 		else if (entry.isDirectory) {		//open folder
 			relativePath.push(entry.name);
-			var response = JSON.parse(webAppInterface.Browse(selectedProfileId, relativePath.join('/')));
-			if (response.status == 'SUCCESS') {
-				$scope.docTree = response.data;
-				$scope.docTree.unshift(backEntry);
-			}
+			$scope.loadDocTree();
+		}
+	}
+	
+	/* Load cifs doc tree using the current orderBy option and relative path
+	   Return boolean value indicating success or fail */
+	$scope.loadDocTree = function () {
+		var response = JSON.parse(webAppInterface.Browse(selectedProfileId, relativePath.join('/'), $scope.orderBy));
+		if (response.status == 'SUCCESS') {
+			$scope.docTree = response.data;
+			$scope.docTree.unshift(backEntry);
+			return true;
+		} else {
+			return false;
 		}
 	}
 	

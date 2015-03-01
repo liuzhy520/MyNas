@@ -34,22 +34,41 @@ public class CifsProfile {
     }
 
     /* Return a list of entries by the relative path */
-    public List<SmbEntry> browse (String relativePath) throws Exception{
+    public List<SmbEntry> browse (final String relativePath, final String orderBy) throws Exception{
         List<SmbEntry> ret = new ArrayList<SmbEntry>();
         SmbFile root = new SmbFile(getSmbInstance(), relativePath);
         for(SmbFile entry : root.listFiles()) {
             if (!entry.isHidden()) {
-                ret.add(new SmbEntry(entry.getName(), entry.isDirectory()));
+                ret.add(new SmbEntry(entry.getName(), entry.isDirectory(), entry.getLastModified()));
             }
         }
         Collections.sort(ret, new Comparator<SmbEntry>() {
             @Override
             public int compare(SmbEntry lhs, SmbEntry rhs) {
-                int sComp = -Boolean.compare(lhs.isDirectory(), rhs.isDirectory());
-                if (sComp != 0) {
-                    return sComp;
-                } else {
+                if (orderBy.equals("typeAsc")) {
+                    int sComp = -Boolean.compare(lhs.isDirectory(), rhs.isDirectory());     //always shows directories first
+                    if (sComp != 0) {
+                        return sComp;
+                    } else {
+                        return lhs.getName().compareTo(rhs.getName());
+                    }
+                } else if (orderBy.equals("typeDesc")) {
+                    int sComp = Boolean.compare(lhs.isDirectory(), rhs.isDirectory());     //always shows directories first
+                    if (sComp != 0) {
+                        return sComp;
+                    } else {
+                        return lhs.getName().compareTo(rhs.getName());
+                    }
+                } else if (orderBy.equals("nameAsc")) {
                     return lhs.getName().compareTo(rhs.getName());
+                } else if (orderBy.equals("nameDesc")) {
+                    return -lhs.getName().compareTo(rhs.getName());
+                } else if (orderBy.equals("dateAsc")) {
+                    return lhs.getLastModifiedTime() - rhs.getLastModifiedTime() > 0 ? 1 : -1;
+                } else if (orderBy.equals("dateDesc")) {
+                    return lhs.getLastModifiedTime() - rhs.getLastModifiedTime() <= 0 ? 1 : -1;
+                } else {
+                    return 0;       //Unsupported sort option. Do not sort.
                 }
             }
         });

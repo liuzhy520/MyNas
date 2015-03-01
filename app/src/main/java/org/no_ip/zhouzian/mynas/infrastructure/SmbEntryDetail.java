@@ -9,7 +9,7 @@ public class SmbEntryDetail extends SmbEntry{
     private String size;
 
     public SmbEntryDetail(String name, boolean isDirectory, long created, long lastModified, long size) {
-        super (name, isDirectory);
+        super (name, isDirectory, lastModified);
         this.created = new Date(created).toString();
         this.lastModified = new Date(lastModified).toString();
         this.size = Formatter.FormatFileSize(size);

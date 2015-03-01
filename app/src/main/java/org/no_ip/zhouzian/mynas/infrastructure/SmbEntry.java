@@ -3,10 +3,12 @@ package org.no_ip.zhouzian.mynas.infrastructure;
 public class SmbEntry {
     private String name;
     private boolean isDirectory;
+    private long lastModifiedTime;
 
-    public SmbEntry(String name, boolean isDirectory) {
+    public SmbEntry(String name, boolean isDirectory, long lastModified) {
         this.name = name;
         this.isDirectory = isDirectory;
+        this.lastModifiedTime = lastModified;
     }
 
     public String getName() {
@@ -23,5 +25,13 @@ public class SmbEntry {
 
     public void setDirectory(boolean isDirectory) {
         this.isDirectory = isDirectory;
+    }
+
+    public long getLastModifiedTime() {
+        return lastModifiedTime;
+    }
+
+    public void setLastModifiedTime(long lastModified) {
+        this.lastModifiedTime = lastModified;
     }
 }

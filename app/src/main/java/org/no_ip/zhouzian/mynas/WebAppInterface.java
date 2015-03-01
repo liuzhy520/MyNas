@@ -114,13 +114,13 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface
-    public String Browse(int profileId, String relativePath) {
+    public String Browse(int profileId, String relativePath, String orderBy) {
         WebAppResponseStatus status = WebAppResponseStatus.SUCCESS;
         Object data = null;
         String errorMsg = null;
         try{
             CifsProfile profile = CifsProfileManager.GetProfileById(profileId);
-            data = profile.browse(relativePath);
+            data = profile.browse(relativePath, orderBy);
         } catch (Exception ex) {
             status = WebAppResponseStatus.ERROR;
             errorMsg = ex.getMessage();
