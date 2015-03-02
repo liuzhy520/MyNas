@@ -166,6 +166,9 @@ public class WebAppInterface {
     public void StreamFile (int profileId, String relativePath) {
         try{
             CifsProfile profile = CifsProfileManager.GetProfileById(profileId);
+            if (sServer != null) {      //stop previous thread.
+                sServer.stop();
+            }
             sServer = new StreamServer();
             sServer.init("127.0.0.1");
             Uri uri = profile.streamFile(sServer, relativePath);
