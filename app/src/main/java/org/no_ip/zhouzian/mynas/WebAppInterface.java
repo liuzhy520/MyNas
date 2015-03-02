@@ -5,6 +5,7 @@ import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -14,11 +15,13 @@ import com.google.gson.Gson;
 import org.no_ip.zhouzian.mynas.infrastructure.CifsDownloadManager;
 import org.no_ip.zhouzian.mynas.infrastructure.CifsProfile;
 import org.no_ip.zhouzian.mynas.infrastructure.CifsProfileManager;
+import org.no_ip.zhouzian.mynas.infrastructure.StreamServer;
 
 public class WebAppInterface {
     private Context appContext;
     private View webView;
     private ProgressDialog loadingDlg;
+    private StreamServer sServer;
 
     /* Constructor. Initialize other manager classes */
     public WebAppInterface(Context context, View webView){
@@ -160,6 +163,28 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface
+    public void StreamFile (int profileId, String relativePath) {
+        try{
+            CifsProfile profile = CifsProfileManager.GetProfileById(profileId);
+            sServer = new StreamServer();
+            sServer.init("127.0.0.1");
+            Uri uri = profile.streamFile(sServer, relativePath);
+            String extension = "";
+
+            int i = relativePath.lastIndexOf('.');
+            if (i > 0) {
+                extension = relativePath.substring(i+1);
+            }
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(uri, getMimeType(extension));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            appContext.startActivity(intent);
+        } catch (Exception ex) {
+            Toast.makeText(appContext, ex.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @JavascriptInterface
     public void DownloadFile (int profileId, String relativePath) {
         try{
             CifsProfile profile = CifsProfileManager.GetProfileById(profileId);
@@ -200,6 +225,13 @@ public class WebAppInterface {
     @JavascriptInterface
     public void HapticFeedback () {
         webView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+    }
+
+    private String getMimeType(String ext) {
+        switch (ext) {
+            case "mp3": return "audio/x-wav";
+            default: return "";
+        }
     }
 
     private void ShowLoading(final String msg){

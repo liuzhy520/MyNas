@@ -121,6 +121,7 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 	var relativePath = [];			//list of folder paths leading to current browse view
 	var selectedEntry = null;		//current selected entry name
 	$scope.selectedEntryIsFile = true;	//true is file; false is directory
+	$scope.selectedEntryCanPlay = false;	//true if the file can be streamed
 	var selectedProfileId = null;	//current profile id in the browse view;
 	var backEntry = {name: 'Up ...', command: 'up'}		//the first element in the docTree. Used for goes back
 	$scope.orderBy = 'typeAsc';		//default sort
@@ -153,6 +154,11 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 		} else {
 			return entryName;
 		}
+	}
+	var streamTypes = ['mp3'];		//list of streamable file types
+	function canStream(entryName) {
+		var ext = entryName.split('.').pop().toLowerCase();
+		return _.includes(streamTypes, ext);
 	}
 	reloadProfiles();
 	
@@ -232,6 +238,11 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 			}
 			webAppInterface.HapticFeedback();
 			selectedEntry = removeTailingSlash(entry.name);
+			if (!entry.isDirectory) {
+				$scope.selectedEntryCanPlay = canStream(selectedEntry);
+			} else {
+				$scope.selectedEntryCanPlay = false;
+			}
 			$('#entry-menu').modal('show');
 		}
 	}
@@ -245,6 +256,13 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 				$('#entry-menu').modal('hide');
 				$('#entry-details').modal('show');
 			}
+	}
+	
+	/* Stream the selected file. Open it using the default application */
+	$scope.playFile = function() {
+		var path = relativePath.length == 0 ? selectedEntry : relativePath.join('/') + '/' + selectedEntry;
+		webAppInterface.StreamFile(selectedProfileId, path);
+		$('#entry-menu').modal('hide');
 	}
 	
 	/* Download the selected file */

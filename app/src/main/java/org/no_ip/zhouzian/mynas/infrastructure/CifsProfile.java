@@ -81,6 +81,15 @@ public class CifsProfile {
         return new SmbEntryDetail(entry.getName(), entry.isDirectory(), entry.createTime(), entry.lastModified(), entry.length());
     }
 
+    /* Start a streaming server to serve the file and return the uri */
+    public Uri streamFile (StreamServer sServer, String relativePath) throws Exception {
+        SmbFile file = new SmbFile(getSmbInstance(), relativePath);
+        sServer.stop();
+        sServer.setFile(file);
+        sServer.start();
+        return Uri.parse(sServer.getFileUrl());
+    }
+
     /* Download the file using CifsDownloadManager class */
     public void downloadFile (String relativePath) throws Exception {
         SmbFile file = new SmbFile(getSmbInstance(), relativePath);
