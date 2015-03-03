@@ -232,7 +232,7 @@ public class WebAppInterface {
 
     private String getMimeType(String ext) {
         switch (ext) {
-            case "mp3": return "audio/x-wav";
+            case "mp3": return "audio/mpeg";
             default: return "";
         }
     }

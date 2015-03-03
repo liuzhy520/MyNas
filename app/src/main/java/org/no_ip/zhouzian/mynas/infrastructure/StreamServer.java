@@ -230,7 +230,7 @@ public class StreamServer implements Runnable {
                 + dataSource.getContentLength() + "/*\r\n";
         headers += "\r\n";
 
-        InputStream data = null;
+        SmbRandomAccessFile data = null;
         try {
             data = dataSource.createInputStream();
             byte[] buffer = headers.getBytes();
@@ -239,8 +239,9 @@ public class StreamServer implements Runnable {
 
             // Start sending content.
 
-            byte[] buff = new byte[1024 * 8];
-            Log.e(TAG, "No of bytes skipped: " + data.skip(cbSkip));
+            byte[] buff = new byte[1024 * 50];
+            data.seek(cbSkip >= 1024 * 100 ? cbSkip - 1024 * 100 : cbSkip);       // have to backward a little bit
+            Log.e(TAG, "No of bytes skipped: " + cbSkip);
             int cbSentThisBatch = 0;
             while (isRunning) {
                 int cbRead = data.read(buff, 0, buff.length);
@@ -260,10 +261,10 @@ public class StreamServer implements Runnable {
                 }
                 client.getOutputStream().write(buff, 0, cbRead);
                 client.getOutputStream().flush();
-                cbSkip += cbRead;
+                //cbSkip += cbRead;
                 cbSentThisBatch += cbRead;
             }
-            Log.e(TAG, "cbSentThisBatch: " + cbSentThisBatch);
+            Log.e(TAG, "cbSentThisBatch: " + cbSentThisBatch + ". Total: " + dataSource.getContentLength());
             // If we did nothing this batch, block for a second
             if (cbSentThisBatch == 0) {
                 Log.e(TAG, "Blocking until more data appears");
@@ -397,7 +398,7 @@ public class StreamServer implements Runnable {
      */
     protected class ExternalResourceDataSource {
 
-        private InputStream inputStream;
+        private SmbRandomAccessFile inputStream;
         private SmbFile smbResource;
         long contentLength;
 
@@ -425,7 +426,7 @@ public class StreamServer implements Runnable {
                 extension = smbResource.getName().substring(i + 1);
             }
             switch (extension.toLowerCase()) {
-                case "mp3": return "audio/x-wav";
+                case "mp3": return "audio/mpeg";
                 default: return "";
             }
         }
@@ -438,7 +439,7 @@ public class StreamServer implements Runnable {
          * @throws IOException If the implementing class produces an error when opening
          *                     the stream.
          */
-        public InputStream createInputStream() throws IOException {
+        public SmbRandomAccessFile createInputStream() throws IOException {
             // NB: Because createInputStream can only be called once per asset
             // we always create a new file descriptor here.
             getInputStream();
@@ -461,7 +462,7 @@ public class StreamServer implements Runnable {
 
         private void getInputStream() {
             try {
-                inputStream = smbResource.getInputStream();
+                inputStream = new SmbRandomAccessFile(smbResource, "r");
             } catch (IOException e) {
                 e.printStackTrace();
             }
