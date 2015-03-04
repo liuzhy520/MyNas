@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 import org.no_ip.zhouzian.mynas.infrastructure.CifsDownloadManager;
 import org.no_ip.zhouzian.mynas.infrastructure.CifsProfile;
 import org.no_ip.zhouzian.mynas.infrastructure.CifsProfileManager;
+import org.no_ip.zhouzian.mynas.infrastructure.MimeType;
 import org.no_ip.zhouzian.mynas.infrastructure.StreamServer;
 
 public class WebAppInterface {
@@ -172,14 +173,8 @@ public class WebAppInterface {
             sServer = new StreamServer();
             sServer.init("127.0.0.1");
             Uri uri = profile.streamFile(sServer, relativePath);
-            String extension = "";
-
-            int i = relativePath.lastIndexOf('.');
-            if (i > 0) {
-                extension = relativePath.substring(i+1);
-            }
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(uri, getMimeType(extension));
+            intent.setDataAndType(uri, MimeType.GetMimeType(relativePath));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             appContext.startActivity(intent);
         } catch (Exception ex) {
@@ -228,13 +223,6 @@ public class WebAppInterface {
     @JavascriptInterface
     public void HapticFeedback () {
         webView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-    }
-
-    private String getMimeType(String ext) {
-        switch (ext) {
-            case "mp3": return "audio/mpeg";
-            default: return "";
-        }
     }
 
     private void ShowLoading(final String msg){

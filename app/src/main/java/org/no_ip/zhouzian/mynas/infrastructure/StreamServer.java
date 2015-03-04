@@ -65,7 +65,6 @@ public class StreamServer implements Runnable {
             InetAddress inet = InetAddress.getByName(ip);
             byte[] bytes = inet.getAddress();
             socket = new ServerSocket(port, 0, InetAddress.getByAddress(bytes));
-
             socket.setSoTimeout(10000);
             port = socket.getLocalPort();
             url = "http://" + socket.getInetAddress().getHostAddress() + ":"
@@ -224,10 +223,12 @@ public class StreamServer implements Runnable {
         headers += "HTTP/1.1 206 Partial Content\r\n";
         headers += "Content-Type: " + dataSource.getContentType() + "\r\n";
         headers += "Accept-Ranges: bytes\r\n";
-        headers += "Content-Length: " + dataSource.getContentLength()
-                + "\r\n";
+        if (range == null) {
+            headers += "Content-Length: " + dataSource.getContentLength()
+                    + "\r\n";
+        }
         headers += "Content-Range: bytes " + cbSkip + "-"
-                + dataSource.getContentLength() + "/*\r\n";
+                + (dataSource.getContentLength()-1) + "/*" + "\r\n";
         headers += "\r\n";
 
         SmbRandomAccessFile data = null;
@@ -240,7 +241,7 @@ public class StreamServer implements Runnable {
             // Start sending content.
 
             byte[] buff = new byte[1024 * 50];
-            data.seek(cbSkip >= 1024 * 100 ? cbSkip - 1024 * 100 : cbSkip);       // have to backward a little bit
+            data.seek(cbSkip);
             Log.e(TAG, "No of bytes skipped: " + cbSkip);
             int cbSentThisBatch = 0;
             while (isRunning) {
@@ -419,16 +420,7 @@ public class StreamServer implements Runnable {
          * @return A MIME content type.
          */
         public String getContentType() {
-            String extension = "";
-
-            int i = smbResource.getName().lastIndexOf('.');
-            if (i > 0) {
-                extension = smbResource.getName().substring(i + 1);
-            }
-            switch (extension.toLowerCase()) {
-                case "mp3": return "audio/mpeg";
-                default: return "";
-            }
+            return MimeType.GetMimeType(smbResource.getName());
         }
 
         /**
