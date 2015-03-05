@@ -1,5 +1,5 @@
 .list-group-item {
-    over-flow: hidden;
+    overflow-x: hidden;
     text-overflow: ellipsis;
     font-size: medium;
 }
@@ -27,6 +27,11 @@
 .thumbnail {
     padding: 0 20px;
     box-shadow: 0px 5px 10px 0px rgba(140,140,140,1);
+}
+
+.thumbnail h4, .thumbnail p {
+    text-overflow: ellipsis;
+    overflow-x: hidden;
 }
 
 a.thumbnail:hover {
