@@ -175,8 +175,11 @@ public class WebAppInterface {
             Uri uri = profile.streamFile(sServer, relativePath);
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(uri, MimeType.GetMimeType(relativePath));
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            appContext.startActivity(intent);
+            //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            //intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            Intent chooser = Intent.createChooser(intent, "Select app to open...");
+            appContext.startActivity(chooser);
         } catch (Exception ex) {
             Toast.makeText(appContext, ex.getMessage(), Toast.LENGTH_LONG).show();
         }

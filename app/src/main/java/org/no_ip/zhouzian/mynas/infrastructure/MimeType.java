@@ -12,6 +12,8 @@ public class MimeType {
         switch (extension) {
             case "mp3": return "audio/mpeg";
             case "mp4": return "video/mp4";
+            case "avi": return "video/x-msvideo";
+            case "pdf": return "application/pdf";
             default: return "";
         }
     }

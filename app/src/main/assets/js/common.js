@@ -155,7 +155,7 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 			return entryName;
 		}
 	}
-	var streamTypes = ['mp3', 'mp4'];		//list of streamable file types
+	var streamTypes = ['mp3', 'mp4', 'avi', 'pdf'];		//list of streamable file types
 	function canStream(entryName) {
 		var ext = entryName.split('.').pop().toLowerCase();
 		return _.includes(streamTypes, ext);
