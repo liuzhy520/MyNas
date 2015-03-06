@@ -16,6 +16,9 @@ public class MimeType {
             case "flac": return "audio/flac";
             case "mp4": return "video/mp4";
             case "avi": return "video/x-msvideo";
+            case "pdf": return "application/pdf";
+            case "jpg": return "image/jpeg";
+            case "jpeg": return "image/jpeg";
             default: return "";
         }
     }

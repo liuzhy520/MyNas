@@ -122,6 +122,7 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 	var selectedEntry = null;		//current selected entry name
 	$scope.selectedEntryIsFile = true;	//true is file; false is directory
 	$scope.selectedEntryCanPlay = false;	//true if the file can be streamed
+	$scope.selectedEntryCanOpen = false;	//tru if the file can be downloaded and opened
 	var selectedProfileId = null;	//current profile id in the browse view;
 	var backEntry = {name: 'Up ...', command: 'up'}		//the first element in the docTree. Used for goes back
 	$scope.orderBy = 'typeAsc';		//default sort
@@ -156,9 +157,14 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 		}
 	}
 	var streamTypes = ['mp3', 'aac', 'ogg', 'flac', 'mp4', 'avi'];		//list of streamable file types
+	var openTypes = ['pdf', 'jpg', 'jpeg'];											//list of openable file types
 	function canStream(entryName) {
 		var ext = entryName.split('.').pop().toLowerCase();
 		return _.includes(streamTypes, ext);
+	}
+	function canOpen(entryName) {
+		var ext = entryName.split('.').pop().toLowerCase();
+		return _.includes(openTypes, ext);
 	}
 	reloadProfiles();
 	
@@ -240,8 +246,10 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 			selectedEntry = removeTailingSlash(entry.name);
 			if (!entry.isDirectory) {
 				$scope.selectedEntryCanPlay = canStream(selectedEntry);
+				$scope.selectedEntryCanOpen = canOpen(selectedEntry);
 			} else {
 				$scope.selectedEntryCanPlay = false;
+				$scope.selectedEntryCanOpen = false;
 			}
 			$('#entry-menu').modal('show');
 		}
@@ -262,6 +270,13 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 	$scope.playFile = function() {
 		var path = relativePath.length == 0 ? selectedEntry : relativePath.join('/') + '/' + selectedEntry;
 		webAppInterface.StreamFile(selectedProfileId, path);
+		$('#entry-menu').modal('hide');
+	}
+	
+	/* Open the selected file. The file will be loaded into cache directory and open later */
+	$scope.openFile = function() {
+		var path = relativePath.length == 0 ? selectedEntry : relativePath.join('/') + '/' + selectedEntry;
+		webAppInterface.OpenFile(selectedProfileId, path);
 		$('#entry-menu').modal('hide');
 	}
 	

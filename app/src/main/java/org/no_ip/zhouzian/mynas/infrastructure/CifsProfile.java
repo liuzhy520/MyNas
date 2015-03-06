@@ -1,15 +1,20 @@
 package org.no_ip.zhouzian.mynas.infrastructure;
 
 import android.app.DownloadManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.InputMismatchException;
 import java.util.List;
 
 import jcifs.smb.NtlmPasswordAuthentication;
@@ -90,12 +95,53 @@ public class CifsProfile {
         return Uri.parse(sServer.getFileUrl());
     }
 
-    /* Download the file using CifsDownloadManager class */
-    public void downloadFile (String relativePath) throws Exception {
+    /* Download the file async using CifsDownloadManager class */
+    public void downloadFileAsync(String relativePath) throws Exception {
         SmbFile file = new SmbFile(getSmbInstance(), relativePath);
         if (file.isFile()) {
             File destFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             CifsDownloadManager.AddJob(file, destFolder);
+        } else {
+            throw new CifsProfileException("Cannot download folder.");
+        }
+    }
+
+    /* Download a file sync and return the File object. Return value does not guarantee exist */
+    public File downloadFileSync (Context context, String relativePath) throws Exception {
+        String SYNC_DL_FOLDER = "cached_doc";
+        File syncDownloadFolder = new File(context.getExternalCacheDir(), SYNC_DL_FOLDER);
+        if (syncDownloadFolder.exists()) {
+            for (File f : syncDownloadFolder.listFiles()) {
+                if (f.isFile()) {
+                    f.delete();
+                }
+            }
+        } else {
+            syncDownloadFolder.mkdir();
+        }
+        SmbFile file = new SmbFile(getSmbInstance(), relativePath);
+        if (file.isFile()) {
+            InputStream in = null;
+            OutputStream out = null;
+            byte[] buffer = new byte[8192];
+            try {
+                in = file.getInputStream();
+                out = new FileOutputStream(new File(syncDownloadFolder, file.getName()));
+                int lengthProcessed;
+                while((lengthProcessed = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, lengthProcessed);
+                }
+            } catch (Exception ex) {
+
+            } finally {
+                if (in != null) {
+                    in.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
+            }
+            return new File(syncDownloadFolder, file.getName());
         } else {
             throw new CifsProfileException("Cannot download folder.");
         }

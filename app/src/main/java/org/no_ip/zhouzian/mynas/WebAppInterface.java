@@ -1,7 +1,6 @@
 package org.no_ip.zhouzian.mynas;
 
 import android.app.Activity;
-import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +16,8 @@ import org.no_ip.zhouzian.mynas.infrastructure.CifsProfile;
 import org.no_ip.zhouzian.mynas.infrastructure.CifsProfileManager;
 import org.no_ip.zhouzian.mynas.infrastructure.MimeType;
 import org.no_ip.zhouzian.mynas.infrastructure.StreamServer;
+
+import java.io.File;
 
 public class WebAppInterface {
     private Context appContext;
@@ -175,11 +176,28 @@ public class WebAppInterface {
             Uri uri = profile.streamFile(sServer, relativePath);
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(uri, MimeType.GetMimeType(relativePath));
-            //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            //intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            Intent chooser = Intent.createChooser(intent, "Select app to open...");
+            Intent chooser = Intent.createChooser(intent, "Play with ...");
             appContext.startActivity(chooser);
+        } catch (Exception ex) {
+            Toast.makeText(appContext, ex.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @JavascriptInterface
+    public void OpenFile (int profileId, String relativePath) {
+        try {
+            CifsProfile profile = CifsProfileManager.GetProfileById(profileId);
+            ShowLoading("Loading file ...");
+            File downloadedFile = profile.downloadFileSync(appContext, relativePath);
+            HideLoading();
+            if (downloadedFile.exists()) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(downloadedFile), MimeType.GetMimeType(relativePath));
+                Intent chooser = Intent.createChooser(intent, "Play with ...");
+                appContext.startActivity(chooser);
+            } else {
+                throw new Exception("No file is downloaded.");
+            }
         } catch (Exception ex) {
             Toast.makeText(appContext, ex.getMessage(), Toast.LENGTH_LONG).show();
         }
@@ -189,7 +207,7 @@ public class WebAppInterface {
     public void DownloadFile (int profileId, String relativePath) {
         try{
             CifsProfile profile = CifsProfileManager.GetProfileById(profileId);
-            profile.downloadFile(relativePath);
+            profile.downloadFileAsync(relativePath);
             Toast.makeText(appContext, "Download will be scheduled shortly.", Toast.LENGTH_LONG).show();
         } catch (Exception ex) {
             Toast.makeText(appContext, ex.getMessage(), Toast.LENGTH_LONG).show();
