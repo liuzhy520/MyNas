@@ -54,9 +54,15 @@ public class CifsDownloadManager {
         jobConsumerThread.start();
     }
 
-    /* Get the total number of jobs in the queue */
-    static public int GetJobCountInQueue () {
-        return queue.size();
+    /* Get the number of jobs */
+    static public DownloadJobCountDC GetJobCount () {
+        DownloadJobCountDC ret = new DownloadJobCountDC();
+        int downloadingCnt = currentJob == null ? 0 : 1;
+        int pendingCnt = queue.size();
+        int historyCnt = history.size();
+        ret.setActiveCnt(downloadingCnt + pendingCnt);
+        ret.setTotalCnt(downloadingCnt + pendingCnt + historyCnt);
+        return ret;
     }
 
     /* Get all jobs and their status */

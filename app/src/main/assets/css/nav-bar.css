@@ -100,3 +100,11 @@
 .navbar-custom .navbar-link:hover {
   color: #ffffff;
 }
+
+.badge.nav-badge {
+    color: #428bca;
+    background-color: #ffffff;
+    font-weight: bold;
+    font-size: small;
+    padding: 4px 7px 3px 7px;
+}

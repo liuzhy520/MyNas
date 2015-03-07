@@ -27,7 +27,7 @@
     <div class="collapse navbar-collapse" id="main_nav_bar">
         <ul class="nav navbar-nav">
             <li ng-repeat="tab in tabs" ng-click="selectTab(tab.idx)" ng-class="{active: tab.selected}">
-                <a href="#">{{tab.display_name}}</a>
+                <a href="#">{{tab.display_name}} <span ng-if="tab.idx == 1" class="badge nav-badge pull-right">{{tab.activeCnt}}/{{tab.totalCnt}}</span></a>
             </li>
         </ul>
     </div>
@@ -117,7 +117,8 @@
         <button ng-show="job.status=='IN_PROGRESS'" ng-click="stopJob(job)" class="btn btn-danger btn-xs">Stop</button>
         <button ng-show="job.status=='WAITING'" ng-click="stopJob(job)" class="btn btn-danger btn-xs">Cancel</button>
         <button ng-show="job.status=='FINISHED'" ng-click="open(job)" class="btn btn-success btn-xs">Open</button>
-        <button ng-show="job.status=='FINISHED' || job.status=='TERMINATED' || job.status=='CANCELLED'" ng-click="removeHistory(job)" class="btn btn-danger btn-xs">Remove</button>
+        <button ng-show="job.status==job.status=='TERMINATED' || job.status=='CANCELLED'" ng-click="removeHistory(job)" class="btn btn-danger btn-xs">Delete</button>
+        <button ng-show="job.status=='FINISHED'" ng-click="removeHistory(job)" class="btn btn-danger btn-xs">Remove history</button>
     </div>
 </div>
 

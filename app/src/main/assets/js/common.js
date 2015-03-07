@@ -84,6 +84,8 @@ app.controller('navCtrl', ['$scope', function($scope){		//Navigation controller
 					selected: true},
 					{display_name: 'Downloads',
 					idx: 1,
+					activeCnt: 0,		//number of active joblets including pending joblets
+					totalCnt: 0,		//number of total joblets including terminated and cancelled joblets
 					selected: false},
 					{display_name: 'Settings',
                     idx: 2,
@@ -106,6 +108,18 @@ app.controller('navCtrl', ['$scope', function($scope){		//Navigation controller
         $scope.tabs[idx].selected = true;
         $('#main_nav_bar').collapse('hide');		
     }
+	
+	/* update downloading count when the menu is opened */
+	$('.navbar-collapse').on('shown.bs.collapse', function() {
+		var response = JSON.parse(webAppInterface.GetDownloadCount());
+		if (response.status == 'SUCCESS'){
+			$scope.tabs[1].activeCnt = response.data.activeCnt;
+			$scope.tabs[1].totalCnt = response.data.totalCnt;
+			$scope.$apply();
+		} else {
+			// do nothing
+		}
+	});
 	
 	/* Returns the current selected tab title */
     $scope.getCurTitle = function(){
@@ -352,11 +366,13 @@ app.controller('downloadsCtrl', ['$scope', '$interval', function($scope, $interv
 	//stop or cancel a job
 	$scope.stopJob = function(job) {
 		webAppInterface.StopJob(job.jobId);
+		$scope.getDownloads();
 	}
 	
 	//remove the download history
 	$scope.removeHistory = function(job) {
 		webAppInterface.RemoveHistory(job.jobId);
+		$scope.getDownloads();
 	}
 	
 	//open the downloaded file using the default application. If more than 2 application is available, an application chooser appears

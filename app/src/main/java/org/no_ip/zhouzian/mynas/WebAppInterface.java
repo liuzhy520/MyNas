@@ -232,6 +232,23 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface
+    public String GetDownloadCount () {
+        WebAppResponseStatus status = WebAppResponseStatus.SUCCESS;
+        Object data = null;
+        String errorMsg = null;
+        try{
+            data = CifsDownloadManager.GetJobCount();
+        } catch (Exception ex) {
+            status = WebAppResponseStatus.ERROR;
+            errorMsg = ex.getMessage();
+            Toast.makeText(appContext, errorMsg, Toast.LENGTH_LONG).show();
+        }
+        Gson gson = new Gson();
+        WebAppResponse response = new WebAppResponse(status, data, errorMsg);
+        return gson.toJson(response);
+    }
+
+    @JavascriptInterface
     public void OpenDownloadedFile (String jobId) {
         try {
             File file = CifsDownloadManager.GetFileFromHistory(jobId);
