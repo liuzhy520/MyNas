@@ -90,14 +90,21 @@ app.controller('navCtrl', ['$scope', function($scope){		//Navigation controller
                     selected: false},
                     {display_name: 'About',
                     idx: 3,
-                    selected: false}];
+                    selected: false},
+					{display_name: 'Exit',
+					idx: 4,
+					selected: false}];
 	/* Select a tab by its idx */
     $scope.selectTab = function(idx){
+		if (idx == 4) {		//4 is for exit
+			webAppInterface.ExitApp();
+			return;
+		}	
         _.forEach($scope.tabs, function(tab){
             tab.selected = false;
         });
         $scope.tabs[idx].selected = true;
-        $('#main_nav_bar').collapse('hide');
+        $('#main_nav_bar').collapse('hide');		
     }
 	
 	/* Returns the current selected tab title */

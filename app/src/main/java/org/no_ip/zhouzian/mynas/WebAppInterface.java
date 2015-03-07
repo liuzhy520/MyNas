@@ -246,6 +246,14 @@ public class WebAppInterface {
         webView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
     }
 
+    @JavascriptInterface
+    public void ExitApp () {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        appContext.startActivity(intent);
+    }
+
     private void ShowLoading(final String msg){
         ((Activity)appContext).runOnUiThread(new Runnable(){
             @Override
