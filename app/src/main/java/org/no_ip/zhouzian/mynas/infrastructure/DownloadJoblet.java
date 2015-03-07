@@ -26,6 +26,9 @@ public class DownloadJoblet {
 
     private boolean greenLight;         //indicate if the job should be cancelled in the next loop
 
+    /* Default Constructor */
+    public DownloadJoblet() {}
+
     /* Constructor */
     public DownloadJoblet(Context appContext, SmbFile sourceFile, File destFolder, String destFileName) throws SmbException {
         this.appContext = appContext;
@@ -188,6 +191,30 @@ public class DownloadJoblet {
 
     public DownloadStatus getStatus() {
         return status;
+    }
+
+    public void setJobId(String jobId) {
+        this.jobId = jobId;
+    }
+
+    public void setDestFolder(File destFolder) {
+        this.destFolder = destFolder;
+    }
+
+    public void setDestFileName(String destFileName) {
+        this.destFileName = destFileName;
+    }
+
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
+
+    public void setSpeed(long speed) {
+        this.speed = speed;
     }
 
     public enum DownloadStatus {

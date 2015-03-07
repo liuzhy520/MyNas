@@ -1,6 +1,11 @@
 package org.no_ip.zhouzian.mynas.infrastructure;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +19,8 @@ public class CifsDownloadManager {
     static private List<DownloadJoblet> history;            //successfully finished jobs will be pushed to history array
     static private DownloadJoblet currentJob;               //current job being executed
     static private Thread jobConsumerThread;                //thread that takes job from queue and execute it
+    static private String PREF_NAME = "download_history";      //name of preference
+    static private String KEY_NAME = "download_history_key";   //key of preference
 
     private CifsDownloadManager () {}
 
@@ -27,6 +34,7 @@ public class CifsDownloadManager {
         appContext = context;
         queue = new LinkedBlockingQueue<>();
         history = new ArrayList<>();
+        LoadHistory();      //load history array from shared preference
         jobConsumerThread = new Thread(new Runnable(){
             @Override
             public void run(){
@@ -108,5 +116,30 @@ public class CifsDownloadManager {
         if (jobToRemove != null) {
             history.remove(jobToRemove);
         }
+    }
+
+    /* Load download history from shared preference */
+    static private void LoadHistory () {
+        Gson gson = new Gson();
+        SharedPreferences sharedPref = appContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        String savedProfiles = sharedPref.getString(KEY_NAME, "[]");
+        List<DownloadJobletSerializable> serializableHistory = gson.fromJson(savedProfiles, new TypeToken< ArrayList < DownloadJobletSerializable >>() {}.getType());
+        for (DownloadJobletSerializable serializableJoblet : serializableHistory) {
+            history.add(serializableJoblet.CreateJobletHistory());
+        }
+    }
+
+    /* Write download history to shared preference. It should be called when the application exits */
+    static public void Sync () {
+        List<DownloadJobletSerializable> serializableHistory = new ArrayList<DownloadJobletSerializable>();
+        for (DownloadJoblet joblet : history) {
+            serializableHistory.add(new DownloadJobletSerializable(joblet));
+        }
+        Gson gson = new Gson();
+        SharedPreferences sharedPref = appContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.clear();
+        editor.putString(KEY_NAME, gson.toJson(serializableHistory));
+        editor.commit();
     }
 }

@@ -1,6 +1,7 @@
 package org.no_ip.zhouzian.mynas;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -8,6 +9,8 @@ import android.view.Window;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import org.no_ip.zhouzian.mynas.infrastructure.CifsDownloadManager;
 
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbFile;
@@ -38,6 +41,12 @@ public class MainActivity extends Activity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onStop() {
+        CifsDownloadManager.Sync();
+        super.onStop();
     }
 
     @Override
