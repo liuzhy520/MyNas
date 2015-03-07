@@ -1,5 +1,7 @@
 package org.no_ip.zhouzian.mynas.infrastructure;
 
+import android.webkit.MimeTypeMap;
+
 public class MimeType {
 
     /* Get the mime type from url or file name */
@@ -19,7 +21,7 @@ public class MimeType {
             case "pdf": return "application/pdf";
             case "jpg": return "image/jpeg";
             case "jpeg": return "image/jpeg";
-            default: return "";
+            default: return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
         }
     }
 }

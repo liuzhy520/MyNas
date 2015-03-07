@@ -70,12 +70,12 @@
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="list-group no-margin">
-                        <a href="#" class="list-group-item active" ng-click="playFile()" ng-show="selectedEntryCanPlay">Play</a>
-                        <a href="#" class="list-group-item active" ng-click="openFile()" ng-show="selectedEntryCanOpen">Open</a>
-                        <a href="#" class="list-group-item active" ng-click="downloadFile()" ng-show="selectedEntryIsFile">Download</a>
+                        <a href="#" class="list-group-item active" ng-click="playFile()" ng-if="selectedEntryCanPlay">Play</a>
+                        <a href="#" class="list-group-item active" ng-click="openFile()" ng-if="selectedEntryCanOpen">Open</a>
+                        <a href="#" class="list-group-item active" ng-click="downloadFile()" ng-if="selectedEntryIsFile">Download</a>
                         <a href="#" class="list-group-item active">Rename</a>
                         <a href="#" class="list-group-item active">Delete</a>
-                        <a href="#" class="list-group-item active" ng-click="createProfileShortCut()" ng-show="!selectedEntryIsFile">Create Profile Shortcut</a>
+                        <a href="#" class="list-group-item active" ng-click="createProfileShortCut()" ng-if="!selectedEntryIsFile">Create Profile Shortcut</a>
                         <a href="#" class="list-group-item active" ng-click="showEntryDetails()">Details</a>
                     </div>
                 </div>
@@ -116,6 +116,7 @@
         </div>
         <button ng-show="job.status=='IN_PROGRESS'" ng-click="stopJob(job)" class="btn btn-danger btn-xs">Stop</button>
         <button ng-show="job.status=='WAITING'" ng-click="stopJob(job)" class="btn btn-danger btn-xs">Cancel</button>
+        <button ng-show="job.status=='FINISHED'" ng-click="open(job)" class="btn btn-success btn-xs">Open</button>
         <button ng-show="job.status=='FINISHED' || job.status=='TERMINATED' || job.status=='CANCELLED'" ng-click="removeHistory(job)" class="btn btn-danger btn-xs">Remove</button>
     </div>
 </div>

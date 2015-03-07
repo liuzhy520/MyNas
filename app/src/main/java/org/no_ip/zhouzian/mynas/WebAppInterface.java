@@ -232,6 +232,19 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface
+    public void OpenDownloadedFile (String jobId) {
+        try {
+            File file = CifsDownloadManager.GetFileFromHistory(jobId);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.fromFile(file), MimeType.GetMimeType(file.getName()));
+            Intent chooser = Intent.createChooser(intent, "Play with ...");
+            appContext.startActivity(chooser);
+        } catch (Exception ex) {
+            Toast.makeText(appContext, ex.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @JavascriptInterface
     public void StopJob (String jobId) {
         CifsDownloadManager.RemoveJob(jobId);
     }

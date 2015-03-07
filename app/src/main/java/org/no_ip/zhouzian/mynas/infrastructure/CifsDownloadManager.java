@@ -118,6 +118,27 @@ public class CifsDownloadManager {
         }
     }
 
+    /* Try to open the downloaded file in history */
+    static public File GetFileFromHistory (String jobId) throws Exception {
+        DownloadJoblet jobToOpen = null;
+        for (DownloadJoblet job : history) {
+            if (job.getJobId().equals(jobId)) {
+                jobToOpen = job;
+                break;
+            }
+        }
+        if (jobToOpen != null) {
+            File file = new File(jobToOpen.getDestFolder(), jobToOpen.getDestFileName());
+            if (file.exists()) {
+                return file;
+            } else {
+                throw new Exception("Cannot find the downloaded file.");
+            }
+        } else {
+            throw new Exception("Job Id does not exist.");
+        }
+    }
+
     /* Load download history from shared preference */
     static private void LoadHistory () {
         Gson gson = new Gson();

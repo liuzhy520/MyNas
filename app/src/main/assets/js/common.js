@@ -358,6 +358,11 @@ app.controller('downloadsCtrl', ['$scope', '$interval', function($scope, $interv
 	$scope.removeHistory = function(job) {
 		webAppInterface.RemoveHistory(job.jobId);
 	}
+	
+	//open the downloaded file using the default application. If more than 2 application is available, an application chooser appears
+	$scope.open = function (job) {
+		webAppInterface.OpenDownloadedFile(job.jobId);
+	}
 }]);
 
 /* Profile controller */
