@@ -107,7 +107,7 @@
         <strong>Your download history is empty.</strong>
     </div>
     <div ng-repeat="job in downloads" class="alert" ng-class="getBgColor(job)">
-        <p>{{job.destFileName}}({{job.fileSize}})</p>
+        <p>{{job.destFileName}} ({{job.fileSize}})</p>
         <p ng-show="job.status=='IN_PROGRESS' || job.status=='WAITING'">{{job.speed}}</p>
         <div class="progress">
             <div class="progress-bar" ng-class="getProgressStyle(job)" style="min-width: 2em; width: {{job.progress}}">
@@ -117,7 +117,7 @@
         <button ng-show="job.status=='IN_PROGRESS'" ng-click="stopJob(job)" class="btn btn-danger btn-xs">Stop</button>
         <button ng-show="job.status=='WAITING'" ng-click="stopJob(job)" class="btn btn-danger btn-xs">Cancel</button>
         <button ng-show="job.status=='FINISHED'" ng-click="open(job)" class="btn btn-success btn-xs">Open</button>
-        <button ng-show="job.status==job.status=='TERMINATED' || job.status=='CANCELLED'" ng-click="removeHistory(job)" class="btn btn-danger btn-xs">Delete</button>
+        <button ng-show="job.status=='TERMINATED' || job.status=='CANCELLED'" ng-click="removeHistory(job)" class="btn btn-danger btn-xs">Delete</button>
         <button ng-show="job.status=='FINISHED'" ng-click="removeHistory(job)" class="btn btn-danger btn-xs">Remove history</button>
     </div>
 </div>

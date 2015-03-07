@@ -2,6 +2,7 @@ package org.no_ip.zhouzian.mynas.infrastructure;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.StatFs;
 import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -62,10 +63,13 @@ public class DownloadJoblet {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //TODO: do empty space check
         File destFile = new File(destFolder, destFileName);
         long startTime = new Date().getTime();                //job start time;
         try {
+            StatFs fsChecker = new StatFs(destFolder.getAbsolutePath());
+            if (fsChecker.getAvailableBytes() < fileSize) {
+                throw new Exception();
+            }
             in = sourceFile.getInputStream();
             out = new FileOutputStream(destFile);
             int lengthProcessed;
@@ -102,7 +106,8 @@ public class DownloadJoblet {
                 destFile.delete();      //delete the file if download is terminated
             }
             status = DownloadStatus.TERMINATED;     //terminated by exception
-            showToast("\"" + destFileName + "\" is terminated due to error.");
+            showToast("\"" + destFileName + "\" is terminated due to error or insufficient space.");
+            return;
         }
         if (greenLight) {
             status = DownloadStatus.FINISHED;       //successfully finished execution
