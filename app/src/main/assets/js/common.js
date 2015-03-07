@@ -77,7 +77,7 @@ app.directive('onLongPress', function($timeout) {
 
 /* Navigation bar controller */
 app.controller('navCtrl', ['$scope', function($scope){		//Navigation controller
-	var APP_TITLE = 'My Nas';
+	var APP_TITLE = 'My Home Cloud';
 	/* List of available menus */
     $scope.tabs = [{display_name: APP_TITLE,
 					idx: 0,
