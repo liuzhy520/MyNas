@@ -39,6 +39,24 @@ public class WebAppInterface {
             CifsDownloadManager.Init(context);
         }
     }
+
+    @JavascriptInterface
+    public String GetProfileCount() {
+        WebAppResponseStatus status = WebAppResponseStatus.SUCCESS;
+        Object data = null;
+        String errorMsg = null;
+        try{
+            data = CifsProfileManager.GetProileCount();
+        } catch (Exception ex) {
+            status = WebAppResponseStatus.ERROR;
+            errorMsg = ex.getMessage();
+            Toast.makeText(appContext, errorMsg, Toast.LENGTH_LONG).show();
+        }
+        Gson gson = new Gson();
+        WebAppResponse response = new WebAppResponse(status, data, errorMsg);
+        return gson.toJson(response);
+    }
+
     @JavascriptInterface
     public String GetAllProfiles(){
         WebAppResponseStatus status = WebAppResponseStatus.SUCCESS;

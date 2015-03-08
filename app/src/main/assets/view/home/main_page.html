@@ -27,7 +27,10 @@
     <div class="collapse navbar-collapse" id="main_nav_bar">
         <ul class="nav navbar-nav">
             <li ng-repeat="tab in tabs" ng-click="selectTab(tab.idx)" ng-class="{active: tab.selected}">
-                <a href="#">{{tab.display_name}} <span ng-if="tab.idx == 1" class="badge nav-badge pull-right">{{tab.activeCnt}}/{{tab.totalCnt}}</span></a>
+                <a href="#">{{tab.display_name}}
+                    <span ng-if="tab.idx == 0" class="badge nav-badge">{{tab.profileCnt}} profiles</span>
+                    <span ng-if="tab.idx == 1" class="badge nav-badge">{{tab.activeCnt}} active/{{tab.totalCnt}} total</span>
+                </a>
             </li>
         </ul>
     </div>
@@ -73,8 +76,6 @@
                         <a href="#" class="list-group-item active" ng-click="playFile()" ng-if="selectedEntryCanPlay">Play</a>
                         <a href="#" class="list-group-item active" ng-click="openFile()" ng-if="selectedEntryCanOpen">Open</a>
                         <a href="#" class="list-group-item active" ng-click="downloadFile()" ng-if="selectedEntryIsFile">Download</a>
-                        <a href="#" class="list-group-item active">Rename</a>
-                        <a href="#" class="list-group-item active">Delete</a>
                         <a href="#" class="list-group-item active" ng-click="createProfileShortCut()" ng-if="!selectedEntryIsFile">Create Profile Shortcut</a>
                         <a href="#" class="list-group-item active" ng-click="showEntryDetails()">Details</a>
                     </div>

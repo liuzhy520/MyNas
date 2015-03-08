@@ -81,6 +81,7 @@ app.controller('navCtrl', ['$scope', function($scope){		//Navigation controller
 	/* List of available menus */
     $scope.tabs = [{display_name: APP_TITLE,
 					idx: 0,
+					profileCnt: 0,
 					selected: true},
 					{display_name: 'Downloads',
 					idx: 1,
@@ -115,10 +116,18 @@ app.controller('navCtrl', ['$scope', function($scope){		//Navigation controller
 		if (response.status == 'SUCCESS'){
 			$scope.tabs[1].activeCnt = response.data.activeCnt;
 			$scope.tabs[1].totalCnt = response.data.totalCnt;
-			$scope.$apply();
 		} else {
 			// do nothing
 		}
+		
+		response = JSON.parse(webAppInterface.GetProfileCount());
+		if (response.status == 'SUCCESS'){
+			$scope.tabs[0].profileCnt = response.data;
+		} else {
+			// do nothing
+		}
+		
+		$scope.$apply();
 	});
 	
 	/* Returns the current selected tab title */

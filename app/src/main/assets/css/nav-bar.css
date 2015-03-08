@@ -107,4 +107,7 @@
     font-weight: bold;
     font-size: small;
     padding: 4px 7px 3px 7px;
+    margin-left: 20px;
+    position: relative;
+    top: -2px;
 }

@@ -26,6 +26,11 @@ public class CifsProfileManager {
         Load();
     }
 
+    /* Get number of profiles */
+    static public int GetProileCount() {
+        return profiles.size();
+    }
+
     /* Returns a list of cifs profiles from cache */
     static public List<CifsProfile> GetAllProfiles(){
         return profiles;
