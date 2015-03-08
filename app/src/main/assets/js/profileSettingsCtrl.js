@@ -48,7 +48,7 @@ app.controller('profileSettingsCtrl', ['$scope', function($scope){
 		var response = JSON.parse(webAppInterface.AddProfile($scope.curProfile.profileName, $scope.curProfile.rootUrl, $scope.curProfile.portNumber, $scope.curProfile.domain, $scope.curProfile.username, $scope.curProfile.password));
 		$scope.wait = false;
 		if (response.status == 'SUCCESS'){
-			$scope.goToListView(false);
+			$scope.goToListView(true);
 		}
     }
 
@@ -58,7 +58,7 @@ app.controller('profileSettingsCtrl', ['$scope', function($scope){
 		var response = JSON.parse(webAppInterface.ModifyProfile($scope.curProfile.profileId, $scope.curProfile.profileName, $scope.curProfile.rootUrl, $scope.curProfile.portNumber, $scope.curProfile.domain, $scope.curProfile.username, $scope.curProfile.password));
 		$scope.wait = false;
 		if (response.status == 'SUCCESS'){
-			$scope.goToListView(false);
+			$scope.goToListView(true);
 		}
     }
 
@@ -67,7 +67,7 @@ app.controller('profileSettingsCtrl', ['$scope', function($scope){
 		document.activeElement.blur()	//hide keboard
 		var response = JSON.parse(webAppInterface.RemoveProfileById($scope.curProfile.profileId));
 		if (response.status == 'SUCCESS'){
-			$scope.goToListView(false);
+			$scope.goToListView(true);
 		}
     }
 }]);
