@@ -24,13 +24,13 @@ public class MainActivity extends Activity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE); //Remove title bar. We'll use Bootstrap nav to replace it.
         webView = new WebView(this);
         WebSettings settings = webView.getSettings();
-        settings.setJavaScriptEnabled(true);                //Enable javascript
+        settings.setJavaScriptEnabled(true); //Enable javascript
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             WebView.setWebContentsDebuggingEnabled(true);   //Enable Chrome remote debug on Kitkat or later
         }
         webView.setWebViewClient(new NASWebViewClient());
         setContentView(webView);
-        webView.loadUrl("file:///android_asset/view/home/main_page.html");      //Load single page AngularJS app
+        webView.loadUrl("file:///android_asset/view/index.html");      //Load single page AngularJS app
         initializeJSInterface();
     }
 

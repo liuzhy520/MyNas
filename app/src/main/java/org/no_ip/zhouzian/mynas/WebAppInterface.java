@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -24,11 +25,13 @@ public class WebAppInterface {
     private View webView;
     private ProgressDialog loadingDlg;
     private StreamServer sServer;
+    private boolean doubleBackToExitPressedOnce;
 
     /* Constructor. Initialize other manager classes */
     public WebAppInterface(Context context, View webView){
         this.appContext = context;
         this.webView = webView;
+        this.doubleBackToExitPressedOnce = false;
         loadingDlg = new ProgressDialog(context);
         loadingDlg.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         loadingDlg.setCancelable(false);
@@ -296,10 +299,22 @@ public class WebAppInterface {
 
     @JavascriptInterface
     public void ExitApp () {
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        appContext.startActivity(intent);
+        if (doubleBackToExitPressedOnce) {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            appContext.startActivity(intent);
+        } else {
+            doubleBackToExitPressedOnce = true;
+            Toast.makeText(appContext, "Please click BACK again to exit.", Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce=false;
+                }
+            }, 2000);
+        }
     }
 
     private void ShowLoading(final String msg){
