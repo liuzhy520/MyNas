@@ -417,6 +417,7 @@ app.controller('profileSettingsCtrl', ['$scope', function($scope){
         $scope.showDetail = true;
         $scope.curProfile = {profileId: -1,
                             profileName: '',
+							domain: '',
                             username: '',
                             password: '',
                             rootUrl: '',
@@ -427,7 +428,7 @@ app.controller('profileSettingsCtrl', ['$scope', function($scope){
 	/* Calls Java code to create a new profile */
     $scope.createProfile = function(){
 		document.activeElement.blur()	//hide keyboard
-		var response = JSON.parse(webAppInterface.AddProfile($scope.curProfile.profileName, $scope.curProfile.rootUrl, $scope.curProfile.portNumber, $scope.curProfile.username, $scope.curProfile.password));
+		var response = JSON.parse(webAppInterface.AddProfile($scope.curProfile.profileName, $scope.curProfile.rootUrl, $scope.curProfile.portNumber, $scope.curProfile.domain, $scope.curProfile.username, $scope.curProfile.password));
 		$scope.wait = false;
 		if (response.status == 'SUCCESS'){
 			$scope.goToListView(false);
@@ -437,7 +438,7 @@ app.controller('profileSettingsCtrl', ['$scope', function($scope){
 	/* Calls Java code to modify the current selected profile */
     $scope.saveProfile = function(){
 		document.activeElement.blur()	//hide keyboard
-		var response = JSON.parse(webAppInterface.ModifyProfile($scope.curProfile.profileId, $scope.curProfile.profileName, $scope.curProfile.rootUrl, $scope.curProfile.portNumber, $scope.curProfile.username, $scope.curProfile.password));
+		var response = JSON.parse(webAppInterface.ModifyProfile($scope.curProfile.profileId, $scope.curProfile.profileName, $scope.curProfile.rootUrl, $scope.curProfile.portNumber, $scope.curProfile.domain, $scope.curProfile.username, $scope.curProfile.password));
 		$scope.wait = false;
 		if (response.status == 'SUCCESS'){
 			$scope.goToListView(false);

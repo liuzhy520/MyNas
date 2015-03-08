@@ -26,14 +26,16 @@ public class CifsProfile {
     private String profileName;
     private String rootUrl;
     private int portNumber;     //default should be 445, but some old NAS devices use 139
+    private String domain;
     private String username;
     private String password;
 
-    public CifsProfile (String profileName, String rootUrl, int portNumber, String username, String password){
+    public CifsProfile (String profileName, String rootUrl, int portNumber, String domain, String username, String password){
         this.profileId = -1;
         this.profileName = profileName.trim();
         this.rootUrl = rootUrl.trim();
         this.portNumber = portNumber;
+        this.domain = domain.trim();
         this.username = username.trim();
         this.password = password.trim();
     }
@@ -180,7 +182,7 @@ public class CifsProfile {
 
     /* Create a SmbFile instance the can be used to query folders */
     public SmbFile getSmbInstance () throws MalformedURLException {
-        NtlmPasswordAuthentication auth = isAnonymous() ? new NtlmPasswordAuthentication("", "Guest", "") : new NtlmPasswordAuthentication("", username, password);    // we don't support domain, so the first parameter is always empty string
+        NtlmPasswordAuthentication auth = isAnonymous() ? new NtlmPasswordAuthentication(domain, "Guest", "") : new NtlmPasswordAuthentication(domain, username, password);
         return new SmbFile(formatUrl(), auth);
     }
 
@@ -193,7 +195,7 @@ public class CifsProfile {
         }
         newRootUrl += relativePath;
         String[] paths = relativePath.split("/");
-        return new CifsProfile(paths[paths.length - 1], newRootUrl, this.portNumber, this.username, this.password);
+        return new CifsProfile(paths[paths.length - 1], newRootUrl, this.portNumber, this.domain, this.username, this.password);
     }
 
     /* Insert port number to url if the port number is not 445.
@@ -242,6 +244,14 @@ public class CifsProfile {
 
     public void setPortNumber(int portNumber) {
         this.portNumber = portNumber;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
     public String getUsername() {

@@ -62,6 +62,7 @@ public class CifsProfileManager {
                 tProfile.setProfileName(profile.getProfileName());
                 tProfile.setRootUrl(profile.getRootUrl());
                 tProfile.setPortNumber(profile.getPortNumber());
+                tProfile.setDomain(profile.getDomain());
                 tProfile.setUsername(profile.getUsername());
                 tProfile.setPassword(profile.getPassword());
                 Commit();

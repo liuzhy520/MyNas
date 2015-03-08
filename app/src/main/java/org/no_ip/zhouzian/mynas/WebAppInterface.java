@@ -57,12 +57,12 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface
-    public String AddProfile(String profileName, String rootUrl, int portNumber, String username, String password){
+    public String AddProfile(String profileName, String rootUrl, int portNumber, String domain, String username, String password){
         WebAppResponseStatus status = WebAppResponseStatus.SUCCESS;
         Object data = null;
         String errorMsg = null;
         try {
-            CifsProfile newProfile = new CifsProfile(profileName, rootUrl, portNumber, username, password);
+            CifsProfile newProfile = new CifsProfile(profileName, rootUrl, portNumber, domain, username, password);
             ShowLoading("Validating profile...");
             newProfile.validate();
             HideLoading();
@@ -79,12 +79,12 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface
-    public String ModifyProfile(int profileId, String profileName, String rootUrl, int portNumber, String username, String password){
+    public String ModifyProfile(int profileId, String profileName, String rootUrl, int portNumber, String domain, String username, String password){
         WebAppResponseStatus status = WebAppResponseStatus.SUCCESS;
         Object data = null;
         String errorMsg = null;
         try{
-            CifsProfile profile = new CifsProfile(profileName, rootUrl, portNumber, username, password);
+            CifsProfile profile = new CifsProfile(profileName, rootUrl, portNumber, domain, username, password);
             ShowLoading("Validating profile...");
             profile.validate();
             HideLoading();
