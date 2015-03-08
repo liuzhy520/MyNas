@@ -2,10 +2,8 @@ package org.no_ip.zhouzian.mynas.infrastructure;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

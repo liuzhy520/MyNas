@@ -1,6 +1,5 @@
 package org.no_ip.zhouzian.mynas.infrastructure;
 
-import java.text.DecimalFormat;
 import java.util.Date;
 
 public class SmbEntryDetail extends SmbEntry{

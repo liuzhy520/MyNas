@@ -1,11 +1,8 @@
 package org.no_ip.zhouzian.mynas.infrastructure;
 
-import android.app.DownloadManager;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -14,12 +11,9 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.InputMismatchException;
 import java.util.List;
-
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbFile;
-import jcifs.smb.SmbRandomAccessFile;
 
 public class CifsProfile {
     private int profileId;
@@ -53,14 +47,14 @@ public class CifsProfile {
             @Override
             public int compare(SmbEntry lhs, SmbEntry rhs) {
                 if (orderBy.equals("typeAsc")) {
-                    int sComp = -Boolean.compare(lhs.isDirectory(), rhs.isDirectory());     //always shows directories first
+                    int sComp = -BooleanCompare(lhs.isDirectory(), rhs.isDirectory());     //always shows directories first
                     if (sComp != 0) {
                         return sComp;
                     } else {
                         return lhs.getName().compareTo(rhs.getName());
                     }
                 } else if (orderBy.equals("typeDesc")) {
-                    int sComp = Boolean.compare(lhs.isDirectory(), rhs.isDirectory());     //always shows directories first
+                    int sComp = BooleanCompare(lhs.isDirectory(), rhs.isDirectory());     //always shows directories first
                     if (sComp != 0) {
                         return sComp;
                     } else {
@@ -212,6 +206,13 @@ public class CifsProfile {
             sb.append("/");
         }
         return sb.toString();
+    }
+
+    /* Support boolean compare for api level < 19 */
+    private int BooleanCompare(boolean lhs, boolean rhs) {
+        if ((lhs && rhs) || (!lhs && !rhs)) return 0;       //equal
+        else if (lhs && !rhs) return 1;                     //greater
+        else return -1;                                     //less
     }
 
     public int getProfileId() {

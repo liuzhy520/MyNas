@@ -2,9 +2,6 @@ package org.no_ip.zhouzian.mynas.infrastructure;
 
 import java.io.File;
 
-import jcifs.smb.SmbException;
-import jcifs.smb.SmbFile;
-
 public class DownloadJobletSerializable {
     private String jobId;               //unique id of the download job
     private String destFolder;          //the destination folder of the download
