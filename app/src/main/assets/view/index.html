@@ -1,187 +1,229 @@
 <!DOCTYPE html>
 <html ng-app="myNasApp">
 <head>
-    <meta name = "viewport"  content = "initial-scale = 1.0, user-scalable = no">
-    <link href="../lib/bootstrap_3.3.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../css/nav-bar.css" rel="stylesheet">
-    <link href="../css/app.css" rel="stylesheet">
+	<meta name="viewport" content="initial-scale = 1.0, user-scalable = no">
+	<link href="../lib/bootstrap_3.3.2/css/bootstrap.min.css" rel="stylesheet">
+	<link href="../css/nav-bar.css" rel="stylesheet">
+	<link href="../css/app.css" rel="stylesheet">
 
-    <script src="../lib/jquery_2.1.3/jquery-2.1.3.min.js"></script>
-    <script src="../lib/bootstrap_3.3.2/js/bootstrap.min.js"></script>
-    <script src="../lib/angular_1.3.14/angular.min.js"></script>
-    <script src="../lib/angular_bootstrap_checkbox/angular_checkbox.js"></script>
-    <script src="../lib/lodash_3.4.0/lodash.js"></script>
-    <script src="../js/common.js"></script>
-    <script src="../js/ngLongPress.js"></script>
-    <script src="../js/navCtrl.js"></script>
-    <script src="../js/mainCtrl.js"></script>
-    <script src="../js/downloadsCtrl.js"></script>
-    <script src="../js/profileSettingsCtrl.js"></script>
+	<script src="../lib/jquery_2.1.3/jquery-2.1.3.min.js"></script>
+	<script src="../lib/bootstrap_3.3.2/js/bootstrap.min.js"></script>
+	<script src="../lib/angular_1.3.14/angular.min.js"></script>
+	<script src="../lib/angular_bootstrap_checkbox/angular_checkbox.js"></script>
+	<script src="../lib/lodash_3.4.0/lodash.js"></script>
+	<script src="../js/common.js"></script>
+	<script src="../js/ngLongPress.js"></script>
+	<script src="../js/navCtrl.js"></script>
+	<script src="../js/mainCtrl.js"></script>
+	<script src="../js/downloadsCtrl.js"></script>
+	<script src="../js/profileSettingsCtrl.js"></script>
 </head>
 <body ng-controller="navCtrl" style="padding-top: 70px;">
-<nav class="navbar navbar-custom navbar-fixed-top" >
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main_nav_bar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#">{{getCurTitle()}}</a>
-    </div>
-    <div class="collapse navbar-collapse" id="main_nav_bar">
-        <ul class="nav navbar-nav">
-            <li ng-repeat="tab in tabs" ng-click="selectTab(tab.name)" ng-class="{active: tab.selected}">
-                <a href="#">{{tab.display_name}}
-                    <span ng-if="tab.name == 'MAIN'" class="badge nav-badge">{{tab.profileCnt}} profiles</span>
-                    <span ng-if="tab.name == 'DOWNLOAD'" class="badge nav-badge">{{tab.activeCnt}} active/{{tab.totalCnt}} total</span>
-                </a>
-            </li>
-        </ul>
-    </div>
+<nav class="navbar navbar-custom navbar-fixed-top">
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+		        data-target="#main_nav_bar">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+		<a class="navbar-brand" href="#">{{getCurTitle()}}</a>
+	</div>
+	<div class="collapse navbar-collapse" id="main_nav_bar">
+		<ul class="nav navbar-nav">
+			<li ng-repeat="tab in tabs" ng-click="selectTab(tab.name)"
+			    ng-class="{active: tab.selected}">
+				<a href="#">{{tab.display_name}}
+					<span ng-if="tab.name == 'MAIN'" class="badge nav-badge">{{tab.profileCnt}} profiles</span>
+					<span ng-if="tab.name == 'DOWNLOAD'" class="badge nav-badge">{{tab.activeCnt}} active/{{tab.totalCnt}} total</span>
+				</a>
+			</li>
+		</ul>
+	</div>
 </nav>
 
 <div class="container" ng-if="getCurName() == 'MAIN'" ng-controller="nasMainCtrl">
-    <div class="row" ng-show="!connected">
-        <div class="col-xs-12">
-            <div class="alert alert-info" ng-show="profiles.length==0">
-                <strong>You have not any profiles yet.</strong>
-                <p>Create your first profile in Settings page by pressing <strong>Menu</strong> button and tap <strong>Settings</strong>!</p>
-            </div>
-            <a href="#" class="thumbnail" ng-repeat="profile in profiles" ng-click="connectProfile(profile.profileId)">
-                <h4 style="font-weight: bold;"><span class="glyphicon glyphicon-hdd"></span>{{profile.profileName}}</h4>
-                <p>{{profile.rootUrl}}</p>
-            </a>
-        </div>
-    </div>
-    <div ng-show="connected">
-        <div class="browser-btn-bar row">
-            <div class="btn-group col-xs-3" role="group">
-                <button class="btn btn-primary no-large" ng-click="disconnect()"><span class="glyphicon glyphicon-chevron-left no-margin"></span></button>
-            </div>
-            <div class="col-xs-9">
-                <strong>Order by: </strong>
-                <select class="form-control" style="display: inline-block; width: auto;" ng-model="orderBy" ng-options="sort.value as sort.label for sort in sortOpts" ng-change="loadDocTree()"></select>
-            </div>
-        </div>
-        <div class="list-group entry-list-wrapper">
-            <a href="#" class="list-group-item" ng-repeat="entry in docTree" ng-click="goTo(entry)" on-long-press="showContextMenu(entry)">
-                <span class="glyphicon glyphicon-folder-open" ng-show="entry.isDirectory && !entry.command"></span>
-                <span class="glyphicon glyphicon-file" ng-show="!entry.isDirectory && !entry.command"></span>
-                <span class="glyphicon glyphicon-arrow-up" ng-show="entry.command == 'up'"></span>
-                {{entry.name}}
-            </a>
-        </div>
-    </div>
-    <div class="modal fade" id="entry-menu" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="list-group no-margin">
-                        <a href="#" class="list-group-item active" ng-click="playFile()" ng-if="selectedEntryCanPlay">Play</a>
-                        <a href="#" class="list-group-item active" ng-click="openFile()" ng-if="selectedEntryCanOpen">Open</a>
-                        <a href="#" class="list-group-item active" ng-click="downloadFile()" ng-if="selectedEntryIsFile">Download</a>
-                        <a href="#" class="list-group-item active" ng-click="createProfileShortCut()" ng-if="!selectedEntryIsFile">Create Profile Shortcut</a>
-                        <a href="#" class="list-group-item active" ng-click="showEntryDetails()">Details</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="entry-details" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="panel panel-primary no-margin">
-                        <div class="panel-heading">
-                            {{curEntryDetail.name}}
-                        </div>
-                        <div class="panel-body">
-                            <p>Created: {{curEntryDetail.created}}</p>
-                            <p>Modified: {{curEntryDetail.lastModified}}</p>
-                            <p>Size: {{curEntryDetail.size}}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="row" ng-show="!connected">
+		<div class="col-xs-12">
+			<div class="alert alert-info" ng-show="profiles.length==0">
+				<strong>You have not any profiles yet.</strong>
+
+				<p>Create your first profile in Settings page by pressing <strong>Menu</strong>
+					button and tap <strong>Settings</strong>!</p>
+			</div>
+			<a href="#" class="thumbnail" ng-repeat="profile in profiles"
+			   ng-click="connectProfile(profile.profileId)">
+				<h4 style="font-weight: bold;"><span class="glyphicon glyphicon-hdd"></span>{{profile.profileName}}
+				</h4>
+
+				<p>{{profile.rootUrl}}</p>
+			</a>
+		</div>
+	</div>
+	<div ng-show="connected">
+		<div class="browser-btn-bar row">
+			<div class="btn-group col-xs-3" role="group">
+				<button class="btn btn-primary no-large" ng-click="disconnect()"><span
+						class="glyphicon glyphicon-chevron-left no-margin"></span></button>
+			</div>
+			<div class="col-xs-9">
+				<strong>Order by: </strong>
+				<select class="form-control" style="display: inline-block; width: auto;"
+				        ng-model="orderBy"
+				        ng-options="sort.value as sort.label for sort in sortOpts"
+				        ng-change="loadDocTree()"></select>
+			</div>
+		</div>
+		<div class="list-group entry-list-wrapper">
+			<a href="#" class="list-group-item" ng-repeat="entry in docTree" ng-click="goTo(entry)"
+			   on-long-press="showContextMenu(entry)">
+				<span class="glyphicon glyphicon-folder-open"
+				      ng-show="entry.isDirectory && !entry.command"></span>
+				<span class="glyphicon glyphicon-file"
+				      ng-show="!entry.isDirectory && !entry.command"></span>
+				<span class="glyphicon glyphicon-arrow-up" ng-show="entry.command == 'up'"></span>
+				{{entry.name}}
+			</a>
+		</div>
+	</div>
+	<div class="modal fade" id="entry-menu" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="list-group no-margin">
+						<a href="#" class="list-group-item active" ng-click="playFile()"
+						   ng-if="selectedEntryCanPlay">Play</a>
+						<a href="#" class="list-group-item active" ng-click="openFile()"
+						   ng-if="selectedEntryCanOpen">Open</a>
+						<a href="#" class="list-group-item active" ng-click="downloadFile()"
+						   ng-if="selectedEntryIsFile">Download</a>
+						<a href="#" class="list-group-item active"
+						   ng-click="createProfileShortCut()" ng-if="!selectedEntryIsFile">Create
+							Profile Shortcut</a>
+						<a href="#" class="list-group-item active" ng-click="showEntryDetails()">Details</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="entry-details" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="panel panel-primary no-margin">
+						<div class="panel-heading">
+							{{curEntryDetail.name}}
+						</div>
+						<div class="panel-body">
+							<p>Created: {{curEntryDetail.created}}</p>
+
+							<p>Modified: {{curEntryDetail.lastModified}}</p>
+
+							<p>Size: {{curEntryDetail.size}}</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div class="container" ng-if="getCurName() == 'DOWNLOAD'" ng-controller="downloadsCtrl">
-    <div class="alert alert-info" ng-show="downloads.length==0">
-        <strong>Your download history is empty.</strong>
-    </div>
-    <div ng-repeat="job in downloads" class="alert" ng-class="getBgColor(job)">
-        <p>{{job.destFileName}} ({{job.fileSize}})</p>
-        <p ng-show="job.status=='IN_PROGRESS' || job.status=='WAITING'">{{job.speed}}</p>
-        <div class="progress">
-            <div class="progress-bar" ng-class="getProgressStyle(job)" style="min-width: 2em; width: {{job.progress}}">
-                {{job.progress}}
-            </div>
-        </div>
-        <button ng-show="job.status=='IN_PROGRESS'" ng-click="stopJob(job)" class="btn btn-danger btn-xs">Stop</button>
-        <button ng-show="job.status=='WAITING'" ng-click="stopJob(job)" class="btn btn-danger btn-xs">Cancel</button>
-        <button ng-show="job.status=='FINISHED'" ng-click="open(job)" class="btn btn-success btn-xs">Open</button>
-        <button ng-show="job.status=='TERMINATED' || job.status=='CANCELLED'" ng-click="removeHistory(job)" class="btn btn-danger btn-xs">Delete</button>
-        <button ng-show="job.status=='FINISHED'" ng-click="removeHistory(job)" class="btn btn-danger btn-xs">Remove history</button>
-    </div>
+	<div class="alert alert-info" ng-show="downloads.length==0">
+		<strong>Your download history is empty.</strong>
+	</div>
+	<div ng-repeat="job in downloads" class="alert" ng-class="getBgColor(job)">
+		<p>{{job.destFileName}} ({{job.fileSize}})</p>
+
+		<p ng-show="job.status=='IN_PROGRESS' || job.status=='WAITING'">{{job.speed}}</p>
+
+		<div class="progress">
+			<div class="progress-bar" ng-class="getProgressStyle(job)"
+			     style="min-width: 2em; width: {{job.progress}}">
+				{{job.progress}}
+			</div>
+		</div>
+		<button ng-show="job.status=='IN_PROGRESS'" ng-click="stopJob(job)"
+		        class="btn btn-danger btn-xs">Stop
+		</button>
+		<button ng-show="job.status=='WAITING'" ng-click="stopJob(job)"
+		        class="btn btn-danger btn-xs">Cancel
+		</button>
+		<button ng-show="job.status=='FINISHED'" ng-click="open(job)"
+		        class="btn btn-success btn-xs">Open
+		</button>
+		<button ng-show="job.status=='TERMINATED' || job.status=='CANCELLED'"
+		        ng-click="removeHistory(job)" class="btn btn-danger btn-xs">Delete
+		</button>
+		<button ng-show="job.status=='FINISHED'" ng-click="removeHistory(job)"
+		        class="btn btn-danger btn-xs">Remove history
+		</button>
+	</div>
 </div>
 
 <div class="container" ng-if="getCurName() == 'SETTINGS'" ng-controller="profileSettingsCtrl">
-    <div ng-if="!showDetail">
-        <div class="btn-group" style="margin-bottom: 10px;">
-            <button class="btn btn-success" ng-click="goToNewProfile()">Create new profile</button>
-        </div>
-        <div class="list-group">
-            <a href="#" class="list-group-item" ng-repeat="profile in profiles" ng-click="viewDetail(profile)">
-                <span class="glyphicon glyphicon-wrench"></span>
-                {{profile.profileName}}
-            </a>
-        </div>
-    </div>
-    <div ng-if="showDetail">
-        <form class="well">
-            <div class="form-group">
-                <label>Profile Name:</label>
-                <input class="form-control" ng-model="curProfile.profileName">
-            </div>
-            <div class="form-group">
-                <label>Root URL:</label>
-                <input class="form-control" ng-model="curProfile.rootUrl">
-            </div>
+	<div ng-if="!showDetail">
+		<div class="btn-group" style="margin-bottom: 10px;">
+			<button class="btn btn-success" ng-click="goToNewProfile()">Create new profile</button>
+		</div>
+		<div class="list-group">
+			<a href="#" class="list-group-item" ng-repeat="profile in profiles"
+			   ng-click="viewDetail(profile)">
+				<span class="glyphicon glyphicon-wrench"></span>
+				{{profile.profileName}}
+			</a>
+		</div>
+	</div>
+	<div ng-if="showDetail">
+		<form class="well">
 			<div class="form-group">
-                <label>Port (445 or 139):</label>
-                <input type="number" class="form-control" ng-model="curProfile.portNumber">
-            </div>
-            <div class="form-group">
-                <label>Domain:</label>
-                <input class="form-control" ng-model="curProfile.domain">
-            </div>
-            <div class="form-group">
-                <label>Username:</label>
-                <input class="form-control" ng-model="curProfile.username">
-            </div>
-            <div class="form-group">
-                <label>Password:</label>
-                <input type="password" class="form-control" ng-model="curProfile.password">
-            </div>
-        </form>
-        <div class="btn-group">
-            <button class="btn btn-primary" ng-click="goToListView(true)" ng-disabled="wait">Back</button>
-        </div>
-        <div class="btn-group pull-right" ng-show="curProfile.profileId != -1">
-            <button class="btn btn-danger"  ng-click="deleteProfile()" ng-disabled="wait">Delete</button>
-            <button class="btn btn-success" ng-click="saveProfile()" ng-disabled="wait">Save</button>
-        </div>
-        <button class="btn btn-success pull-right" ng-show="curProfile.profileId == -1" ng-click="createProfile()" ng-disabled="wait">Create</button>
-    </div>
+				<label>Profile Name:</label>
+				<input class="form-control" ng-model="curProfile.profileName">
+			</div>
+			<div class="form-group">
+				<label>Root URL:</label>
+				<input class="form-control" ng-model="curProfile.rootUrl">
+			</div>
+			<div class="form-group">
+				<label>Port (445 or 139):</label>
+				<input type="number" class="form-control" ng-model="curProfile.portNumber">
+			</div>
+			<div class="form-group">
+				<label>Domain:</label>
+				<input class="form-control" ng-model="curProfile.domain">
+			</div>
+			<div class="form-group">
+				<label>Username:</label>
+				<input class="form-control" ng-model="curProfile.username">
+			</div>
+			<div class="form-group">
+				<label>Password:</label>
+				<input type="password" class="form-control" ng-model="curProfile.password">
+			</div>
+		</form>
+		<div class="btn-group">
+			<button class="btn btn-primary" ng-click="goToListView(true)" ng-disabled="wait">Back
+			</button>
+		</div>
+		<div class="btn-group pull-right" ng-show="curProfile.profileId != -1">
+			<button class="btn btn-danger" ng-click="deleteProfile()" ng-disabled="wait">Delete
+			</button>
+			<button class="btn btn-success" ng-click="saveProfile()" ng-disabled="wait">Save
+			</button>
+		</div>
+		<button class="btn btn-success pull-right" ng-show="curProfile.profileId == -1"
+		        ng-click="createProfile()" ng-disabled="wait">Create
+		</button>
+	</div>
 </div>
 
 <div class="container" ng-if="getCurName() == 'ABOUT'">
-    <p>My Home Cloud lets you browse CIFS (Windows) shared folders in your home network.</p>
-    <p>Project started from Jan 2015.</p>
-    <p>For Wen and Daniel.</p>
+	<p>My Home Cloud lets you browse CIFS (Windows) shared folders in your home network.</p>
+
+	<p>Project started from Jan 2015.</p>
+
+	<p>For Wen and Daniel.</p>
 </div>
 </body>
 </html>
