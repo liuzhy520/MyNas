@@ -35,7 +35,7 @@ var Global = function(){
 			menuHandler = null;
 		},
 		onMenuClicked: function(){
-			if (typeof menuHandler == 'function') {
+			if (_.isFunction(menuHandler)) {
 				menuHandler();
 			}
 		}
