@@ -164,9 +164,7 @@
 
 <div class="container" ng-if="getCurName() == 'SETTINGS'" ng-controller="profileSettingsCtrl">
 	<div ng-if="!showDetail">
-		<div class="btn-group" style="margin-bottom: 10px;">
-			<button class="btn btn-success" ng-click="goToNewProfile()">Create new profile</button>
-		</div>
+		<button class="btn btn-success btn-block" ng-click="goToNewProfile()" style="margin-bottom: 10px;">Create new profile</button>
 		<div class="list-group">
 			<a href="#" class="list-group-item" ng-repeat="profile in profiles"
 			   ng-click="viewDetail(profile)">
@@ -176,7 +174,7 @@
 		</div>
 	</div>
 	<div ng-if="showDetail">
-		<form class="well">
+		<form class="well" style="margin-bottom: 10px">
 			<div class="form-group">
 				<label>Profile Name:</label>
 				<input class="form-control" ng-model="curProfile.profileName">
