@@ -15,12 +15,12 @@ app.controller('nasMainCtrl', ['$scope', function($scope){
 	$scope.orderBy = 'typeAsc';		//default sort
 
 	/* Order by options */
-	$scope.sortOpts = [{label: 'Name Asc', value: 'nameAsc'},
+	$scope.sortOpts = [{label: 'Folder First', value: 'typeAsc'},
+						{label: 'File First', value: 'typeDesc'},
+						{label: 'Name Asc', value: 'nameAsc'},
 						{label: 'Name Desc', value: 'nameDesc'},
 						{label: 'Date Modified Asc', value: 'dateAsc'},
-						{label: 'Date Modified Desc', value: 'dateDesc'},
-						{label: 'Folder First', value: 'typeAsc'},
-						{label: 'File First', value: 'typeDesc'}];
+						{label: 'Date Modified Desc', value: 'dateDesc'}];
 
 	function reloadProfiles (){
 		 var response = JSON.parse(webAppInterface.GetAllProfiles());

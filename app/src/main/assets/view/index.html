@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="myNasApp">
 <head>
-	<meta name="viewport" content="initial-scale = 1.0, user-scalable = no">
+	<meta name="viewport" content="width=device-width, initial-scale = 1.0, maximum-scale=1, user-scalable = no">
 	<link href="../lib/bootstrap_3.3.4/css/bootstrap.min.css" rel="stylesheet">
 	<link href="../css/nav-bar.css" rel="stylesheet">
 	<link href="../css/app.css" rel="stylesheet">
@@ -68,7 +68,7 @@
 						class="glyphicon glyphicon-chevron-left no-margin"></span></button>
 			</div>
 			<div class="col-xs-9">
-				<strong>Order by: </strong>
+				<strong style="color: #555">Order by: </strong>
 				<select class="form-control" style="display: inline-block; width: auto;"
 				        ng-model="orderBy"
 				        ng-options="sort.value as sort.label for sort in sortOpts"

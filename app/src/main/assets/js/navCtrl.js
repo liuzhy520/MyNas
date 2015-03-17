@@ -42,7 +42,7 @@ app.controller('navCtrl', ['$scope', function($scope){		//Navigation controller
         $('#main_nav_bar').collapse('hide');
     }
 
-	/* update downloading count when the menu is opened */
+	/* update profile count and downloading count when the menu is opened */
 	$('.navbar-collapse').on('shown.bs.collapse', function() {
 		var response = JSON.parse(webAppInterface.GetDownloadCount());
 		if (response.status == 'SUCCESS'){
